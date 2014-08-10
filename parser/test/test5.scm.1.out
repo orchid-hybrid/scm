@@ -1,0 +1,10 @@
+(define (collector)
+  (let ((list '()) (last-cell #f))
+    (lambda args
+      (if (null? args)
+        list
+        (if last-cell
+          (begin
+            (set-cdr! last-cell (cons (car args) '()))
+            (set! last-cell (cdr last-cell)))
+          (begin (set! list (cons (car args) '())) (set! last-cell list)))))))

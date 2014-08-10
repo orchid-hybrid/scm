@@ -1,0 +1,72 @@
+https://web.archive.org/web/20130126113215/http://www.iro.umontreal.ca/~boucherd/mslug/meetings/20041020/90-min-scc/90-min-scc.pdf
+
+[E]  denotes E CPS transformed with continuation C
+ C
+
+E is a source expression
+C is a continuation (in CPS form)
+
+   [program] =       [program]
+              (lambda (r) (%halt r))
+
+
+    [c] = (C c)
+     C
+    [v] = (C v)
+     C
+    [(set! v E_1)] =   [E_1]
+          C          (lambda (r_1)
+                        (C (set! v r_1)))
+    [(if E_1 E_2 E_3)] =       [E_1]
+            C             (lambda (r_1)
+                            (if r_1 [E_2] [E_3]))
+                                      C     C
+    [(begin E_1 E_2)] =        [E_1]
+                        (lambda (r_1) [E_2]) 
+                                        C
+    [(+ E_1 E_2)] =            [E_1]
+                   (lambda (r_1)            [E_2]          
+                                (lambda (r_2) (C (+ r_1 r_@))))
+    [(lambda (P_1 ... P_n) E_0)] =  (C (lambda (k P_1 ... P_n) [E_0]))
+               C                                                 k
+    [(E_0)] =          [E_0]
+       C      (lambda (r_0) (r_0 C))
+    [(E_0 E_1)] =              [E_0]
+         C        (lambda (r_0)   [E_1]
+                      (lambda (r_1) (r_0 C r_1)))
+    [(E_0 E_1 E_2)] =              [E_0]
+           C          (lambda (r_0)   [E_1]
+                         (lambda (r_1)  [E_2]
+                            (lambda (r_2) (r_0 C r_1 r_2))))
+    ...
+    [((lambda () E_0))] = [E_0]
+            C               C
+    [((lambda (P_1) E_0) E_1)] =          [E_1]
+               C                  (lambda (P_1) [E_0])
+                                                  C
+
+    [((lambda (P_1 P_2) E_0) E_1 E_2)] =          [E_1]
+                   C                     (lambda (P_1) [E_2]
+                                             (lambda (P_2) [E_0]))
+                                                             C
+    ...
+
+(define call/cc
+  (lambda (k f)
+    (f k (lambda (dummy-k result)
+             (k result)))))
+
+
+
+
+    [((lambda () E_0))] = [E_0]
+            C               C
+    [((lambda (P_1) E_0) E_1)] =          [E_1]
+               C                  (lambda (P_1) [E_0])
+                                                  C
+
+    [((lambda (P_1 P_2) E_0) E_1 E_2)] =          [E_1]
+                   C                     (lambda (P_1) [E_2]
+                                             (lambda (P_2) [E_0]))
+                                                             C
+    ...

@@ -1,0 +1,6 @@
+$ csi cps.scm -p "(add-all-symbols 'g0) (generate-symbol \"g\")"
+#t
+g1
+$ csi cps.scm -p "(add-all-symbols '(g0 g1)) (generate-symbol \"g\")"
+#f
+g2

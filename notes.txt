@@ -1,0 +1,11 @@
+The philosophy of this compiler is to use "source-to-source" transforms. This means that a compiler pass takes scheme code (with some pre-conditions) and should output valid scheme code that does the same thing, but with extra preconditions.
+
+This should make it easy to write tests that check that the code does the same thing before and after a pass. Each compiler pass has its own folder. The idea is to include a makefile which tests the code.
+
+# The macroexpand pass [TODO] takes any scheme code and expands all the macros away.
+# The CPS pass takes scheme code without any macros left, and converts it so that every call is a tail call.
+# The lambda lifting optimization just adds some arguments to certain lambdas to try to stack allocate them instead of heap allocating.
+# The closure conversion pass should work on code without macros but it will be used after CPS and lambda lifting, so if given CPS'd code it must maintain CPS form. It should eliminate the free variables of every lambda term by creating closures.
+# The hoisting pass requires lambdas to not have any free vars and names them all and puts them all at the top level
+
+
