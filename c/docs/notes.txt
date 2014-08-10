@@ -1,0 +1,53 @@
+$ csi ../utility/* ../parser/parser.scm ../closure-conversion/closure-conversion.scm ../hoist/hoist.scm ../hoist/test/test-hoist.scm -e '(test-hoist (perform-closure-conversion (car (scm-parse-file "test1.scm"))))'
+
+(invoke-closure print "HELLO")
+
+
+
+$ csi ../utility/* ../parser/parser.scm ../closure-conversion/closure-conversion.scm ../hoist/hoist.scm ../hoist/test/test-hoist.scm -e '(test-hoist (perform-closure-conversion (car (scm-parse-file "test2.scm"))))'
+(define lambda0 (lambda (env a b) (invoke-closure (vector-ref env 0) b)))
+(define lambda1
+  (lambda (env f)
+    (invoke-closure
+      (make-closure lambda0 (f))
+      (invoke-closure f "Hello")
+      "World")))
+(define lambda2 (lambda (env s) (invoke-closure (vector-ref env 0) s)))
+
+(invoke-closure (make-closure lambda1 ()) (make-closure lambda2 (print)))
+
+
+
+$ csi ../utility/* ../parser/parser.scm ../closure-conversion/closure-conversion.scm ../hoist/hoist.scm ../hoist/test/test-hoist.scm -e '(test-hoist (perform-closure-conversion (car (scm-parse-file "test3.scm"))))'
+(define lambda0
+  (lambda (env z s)
+    (invoke-closure
+      (vector-ref env 0)
+      (invoke-closure (vector-ref env 1) z s)
+      s)))
+(define lambda1 (lambda (env m n) (make-closure lambda0 (n m))))
+(define lambda2
+  (lambda (env z s)
+    (invoke-closure s (invoke-closure s (invoke-closure s z)))))
+(define lambda3
+  (lambda (env z s)
+    (invoke-closure
+      s
+      (invoke-closure
+        s
+        (invoke-closure s (invoke-closure s (invoke-closure s z)))))))
+(define lambda4 (lambda (env x y) x))
+(define lambda5
+  (lambda (env s)
+    (invoke-closure
+      (make-closure lambda4 ())
+      s
+      (invoke-closure (vector-ref env 0) s))))
+
+(invoke-closure
+  (invoke-closure
+    (make-closure lambda1 ())
+    (make-closure lambda2 ())
+    (make-closure lambda3 ()))
+  "HELLO WORLD!!!"
+  (make-closure lambda5 (print)))

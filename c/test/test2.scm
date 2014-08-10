@@ -1,0 +1,6 @@
+((lambda (f)
+   ((lambda (a b)
+      (f b))
+    (f "Hello") "World"))
+ (lambda (s)
+   (print s)))

@@ -5,5 +5,5 @@
       (newline)
       (pretty-print result))))
 
-(begin
-  (test-hoist '(f (lambda () (f (lambda (x) x))) (lambda () (g (lambda (y) (x y)))) z)))
+;;(begin
+;;  (test-hoist '(f (lambda () (f (lambda (x) x))) (lambda () (g (lambda (y) (x y)))) z)))

@@ -1,7 +1,11 @@
 ;; depends on list.scm, gensym.scm, collector.scm, traverse.scm
 
 (define (hoist collect)
-  (traverse (lambda (v)
+  (traverse (lambda (s)
+              s)
+            (lambda (n)
+              n)
+            (lambda (v)
               v)
             (lambda (args body)
               (let* ((hoisted-body ((hoist collect) body))
