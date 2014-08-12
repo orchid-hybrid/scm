@@ -51,3 +51,9 @@ $ csi ../utility/* ../parser/parser.scm ../closure-conversion/closure-conversion
     (make-closure lambda3 ()))
   "HELLO WORLD!!!"
   (make-closure lambda5 (print)))
+
+
+
+
+
+csi ../utility/*scm ../parser/*scm ../closure-conversion/*scm ../hoist/*scm c.scm -e '(test-c (car (scm-parse-file "test/test3.scm")))' > test3.c

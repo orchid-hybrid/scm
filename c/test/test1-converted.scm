@@ -1,0 +1,1 @@
+(invoke-closure print "HELLO")

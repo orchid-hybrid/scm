@@ -66,7 +66,17 @@ scm scm_make_closure(scm_fptr code, scm env) {
   return scm_make_pair((scm){ .t = scm_type_fptr, .v.f = code}, env);
 }
 
-scm scm_invoke_closure1(scm clos, scm p1) {
+scm scm_invoke_closure1(scm clos) {
+  if(clos.t != scm_type_pair) { puts("!PAIR"); exit(0); }
+  if(clos.v.cons.car->t != scm_type_fptr) { puts("!FPTR"); exit(0); }
+  if(clos.v.cons.cdr->t != scm_type_vector) { puts("!VECTOR"); exit(0); }
+  
+  scm_fptr code = clos.v.cons.car->v.f;
+  scm* env = clos.v.cons.cdr->v.v;
+  return code(env);
+}
+
+scm scm_invoke_closure2(scm clos, scm p1) {
   if(clos.t != scm_type_pair) { puts("!PAIR"); exit(0); }
   if(clos.v.cons.car->t != scm_type_fptr) { puts("!FPTR"); exit(0); }
   if(clos.v.cons.cdr->t != scm_type_vector) { puts("!VECTOR"); exit(0); }
@@ -76,7 +86,7 @@ scm scm_invoke_closure1(scm clos, scm p1) {
   return code(env,p1);
 }
 
-scm scm_invoke_closure2(scm clos, scm p1, scm p2) {
+scm scm_invoke_closure3(scm clos, scm p1, scm p2) {
   if(clos.t != scm_type_pair) { puts("!!PAIR"); exit(0); }
   if(clos.v.cons.car->t != scm_type_fptr) { puts("!!FPTR"); exit(0); }
   if(clos.v.cons.cdr->t != scm_type_vector) { puts("!!VECTOR"); exit(0); }
@@ -144,4 +154,12 @@ main() {
                                           scm_make_closure(lambda3,scm_vector0())),
                       scm_string("HELLO WORLD!!!"),
                       scm_make_closure(lambda5,scm_vector1(scm_make_closure(scm_print,scm_vector0()))));
+
+
+  scm_invoke_closure3(scm_invoke_closure3(make_closure(lambda1,scm_vector0()),
+                                          make_closure(lambda2,scm_vector0()),
+                                          make_closure(lambda3,scm_vector0())),
+                      scm_string("HELLO WORLD!!!"),
+                      make_closure(lambda5,scm_vector1(print)));
+
 }
