@@ -58,6 +58,12 @@
        (list? (cadr exp))
        (equal? 'let* (car exp))))
 
+(define (term-letrec? exp)
+  (and (list? exp)
+       (>= (length exp) 3)
+       (list? (cadr exp))
+       (equal? 'letrec (car exp))))
+
 ;; (define a b)
 (define (term-define? exp)
     (and (list? exp)
@@ -107,18 +113,34 @@
        (= (length exp) 2)
        (equal? 'unquote (car exp))))
 
+(define (term-begin? e)
+  (and (list? e)
+       (>= (length e) 1)
+       (equal? (car e) 'begin)))
+
 (define (desugar exp)
   (cond
-    ((term-set!? exp) `(set! ,(cadr exp) ,(desugar (caddr exp))))
-    
-    ((term-begin? exp)
-     (let loop ((terms (map desugar (cdr exp))))
-       (if (null? terms)
-           #f
-           (if (null? (cdr terms))
-               (desugar (car terms))
-               `((lambda () ,(loop (cdr terms))) ,(car terms))))))
-    
+   ((term-set!? exp) `(set! ,(cadr exp) ,(desugar (caddr exp))))
+
+   ((term-begin? exp)
+    (let loop ((terms (map desugar (cdr exp))))
+      (if (null? terms)
+	  #f
+	  (if (null? (cdr terms))
+	      (desugar (car terms))
+	      `((lambda () ,(loop (cdr terms))) ,(car terms))))))
+   
+   
+   ;; (let loop ((foo bar)) .... (loop (baz foo)))
+   ((term-name-let? exp)
+    (let* ((name (cadr exp))
+	   (bindings (caddr exp))
+	   (params (map car bindings))
+	   (values (map cadr bindings))
+	   (body (cdddr exp)))
+      (desugar `(letrec ((,name `(lambda ,params . body)))
+		  (,name . ,values)))))
+
     ((term-let? exp)
      (let* ((bindings (cadr exp))
             (params (map car bindings))
@@ -135,11 +157,18 @@
                     body
                     `((let* ,(cdr bindings) . ,body)))))))
     
+    ((term-letrec? exp)
+     (let ((bindings (cadr exp))
+	   (body (cddr exp)))
+       (desugar `(let (map (lambda (p) (list p '(void))) (map car bindings))
+		   ,@(map (lambda (b) `(set! ,(car b) ,(cadr b))) bindings)
+                   ,@body))))
+
     ;; (define foo 1)
     ((term-define? exp)
      (let ((name (cadr exp))
            (value (caddr exp)))
-       (desugar `(let ((,name '()))
+       (desugar `(let ((,name (void)))
                    (set! ,name ,(desugar value))))))
     
     ;; (define (foo a) a ...)
