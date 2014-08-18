@@ -12,6 +12,7 @@ all: $(TEST)
 	echo ALL TESTS PASSED
 
 %.2.out: %.scm
+	echo $<
 	sh parser.sh $<
 
 clean:
