@@ -27,6 +27,11 @@
        (= (length e) 3)
        (equal? (car e) 'set!)))
 
+(define (term-begin? e)
+  (and (list? e)
+       (>= (length e) 1)
+       (equal? (car e) 'begin)))
+
 (define (term-var? exp) (symbol? exp))
 (define (term-lambda? exp)
   (and (list? exp)
@@ -105,6 +110,14 @@
 (define (desugar exp)
   (cond
     ((term-set!? exp) `(set! ,(cadr exp) ,(desugar (caddr exp))))
+    
+    ((term-begin? exp)
+     (let loop ((terms (map desugar (cdr exp))))
+       (if (null? terms)
+           #f
+           (if (null? (cdr terms))
+               (desugar (car terms))
+               `((lambda () ,(loop (cdr terms))) ,(car terms))))))
     
     ((term-let? exp)
      (let* ((bindings (cadr exp))

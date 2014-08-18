@@ -79,6 +79,10 @@ scm scm_print(scm* env, scm s) {
   puts(s.v.s);
 }
 
+scm scm_newline(scm* env) {
+  puts("");
+}
+
 scm scm_add(scm* env, scm s) {
  
 }

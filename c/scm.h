@@ -42,6 +42,7 @@ scm scm_invoke_closure3(scm clos, scm p1, scm p2);
 
 scm scm_wrap_prim(scm_fptr prim);
 scm scm_print(scm* env, scm s);
+scm scm_newline(scm* env);
 scm scm_add(scm* env, scm s);
 scm scm_mul(scm* env, scm s);
 scm scm_sub(scm* env, scm s);

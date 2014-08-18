@@ -43,7 +43,8 @@
       (eq? exp '-)
       (eq? exp '*)
       (eq? exp '=)
-      (eq? exp 'print)))
+      (eq? exp 'print)
+      (eq? exp 'newline)))
 
 (define (rename-prim p)
   (cond
@@ -52,18 +53,30 @@
     ((eq? '* p)       "__mul")
     ((eq? '= p)       "__num_eq")
     ((eq? 'print p) "__print")
+    ((eq? 'newline p) "__newline")
     (else             (error "unhandled primitive: " p))))
+
+(define (emit-prim-prelude-prelude)
+  (for-each
+   (lambda (c) (display c) (newline))
+   (list
+    "scm __print;"
+    "scm __newline;"
+    "scm __add;"
+    "scm __sub;"
+    "scm __mul;"
+    "scm __num_eq;")))
 
 (define (emit-prim-prelude)
   (for-each
    (lambda (c) (display c) (newline))
    (list
-    "scm __print = scm_wrap_prim(scm_print);" 
-    "scm __add = scm_wrap_prim(scm_add);"
-    "scm __sub = scm_wrap_prim(scm_sub);" 
-    "scm __mul = scm_wrap_prim(scm_mul);" 
-    "scm __num_eq = scm_wrap_prim(scm_num_eq);")))
-
+    "__print = scm_wrap_prim(scm_print);" 
+    "__newline = scm_wrap_prim(scm_newline);" 
+    "__add = scm_wrap_prim(scm_add);"
+    "__sub = scm_wrap_prim(scm_sub);" 
+    "__mul = scm_wrap_prim(scm_mul);" 
+    "__num_eq = scm_wrap_prim(scm_num_eq);")))
 
 (define (emit-c term)
   (cond ((prim? term)
@@ -88,6 +101,8 @@
            (main ((hoist (cdr collector)) cc))
            (definitions ((car collector))))
       (display "#include \"scm.h\"")
+      (newline)
+      (emit-prim-prelude-prelude)
       (newline)
       (newline)
       (for-each (lambda (definition)
