@@ -36,7 +36,10 @@
                `(make-closure (lambda (env . ,args) ,((closure-convert free-variables) body))
                               (vector . ,free-variables)))
              (lambda (terms)
-               `(invoke-closure . ,(map (closure-convert free-variables) terms)))))
+               (if (and (not (null? terms))
+                        (equal? (car terms) 'quote))
+                   terms
+                   `(invoke-closure . ,(map (closure-convert free-variables) terms))))))
 
 (define (perform-closure-conversion term)
   (let ((a (annotate-free-variables term)))

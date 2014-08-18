@@ -136,11 +136,11 @@
                     `((let* ,(cdr bindings) . ,body)))))))
     
     ;; (define foo 1)
-    ((term-define? exp)
-     (let ((name (cadr exp))
-           (value (caddr exp)))
-       (desugar `(let ((,name '()))
-                   (set! ,name ,(desugar value))))))
+    ;; ((term-define? exp)
+    ;;  (let ((name (cadr exp))
+    ;;        (value (caddr exp)))
+    ;;    (desugar `(let ((,name '()))
+    ;;                (set! ,name ,(desugar value))))))
     
     ;; (define (foo a) a ...)
     ((term-define-procedure? exp)
@@ -189,7 +189,7 @@
        (desugar `(if ,v1 #t ,v2))))
     
     ((term-quote? exp)
-     exp)
+     (quote-desugar (cadr exp)))
     ((term-quasiquote? exp)
      (quasiquote-desugar (cadr exp)))
     ((term-unquote? exp)
@@ -199,14 +199,21 @@
     ((term-app? exp) (map desugar exp))
     (else exp)))
 
+(define (quote-desugar term)
+  (cond
+   ((pair? term)
+    `(cons ,(quote-desugar (car term))
+           ,(quote-desugar (cdr term))))
+   (else `(quote ,term))))
+
 (define (quasiquote-desugar term)
   (cond
    ((term-unquote? term)
-    (cadr term))
+    (desugar (cadr term)))
    ((pair? term)
     `(cons ,(quasiquote-desugar (car term))
            ,(quasiquote-desugar (cdr term))))
-   (else `(quote ,term))))
+   (else (desugar `(quote ,term)))))
 
 (define (test-let)
   (equal? (desugar '(let ((a 1)) a))
