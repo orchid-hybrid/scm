@@ -14,9 +14,13 @@
 ;; let - done
 ;; let* - done
 ;; letrec
+;; if - done
 ;; cond - done
-;; and
-;; or
+;; and - done
+;; or - done
+;; quote - done
+;; quasiquote
+;; unquote 
 
 (define (term-set!? e)
   (and (list? e)
@@ -32,6 +36,7 @@
 
 (define (term-app? exp)
   (and (list? exp)
+       (not (null? exp))
        (or (term-lambda? (car exp))
            (term-var? (car exp)))))
 
@@ -62,9 +67,40 @@
         (list? (cadr exp))
         (equal? 'define (car exp))))
 
+(define (term-if? exp)
+  (and (list? exp)
+       (= (length exp) 4)
+       (equal? 'if (car exp))))
+
 (define (term-cond? exp)
   (and (list? exp)
+       (not (null? exp))
        (equal? 'cond (car exp))))
+
+(define (term-and? exp)
+  (and (list? exp)
+       (= (length exp) 3)
+       (equal? 'and (car exp))))
+
+(define (term-or? exp)
+  (and (list? exp)
+       (= (length exp) 3)
+       (equal? 'or (car exp))))
+
+(define (term-quote? exp)
+  (and (list? exp)
+       (= (length exp) 2)
+       (equal? 'quote (car exp))))
+
+(define (term-quasiquote? exp)
+  (and (list? exp)
+       (= (length exp) 2)
+       (equal? 'quasiquote (car exp))))
+
+(define (term-unquote? exp)
+  (and (list? exp)
+       (= (length exp) 2)
+       (equal? 'unquote (car exp))))
 
 (define (desugar exp)
   (cond
@@ -100,6 +136,14 @@
            (body (cddr exp)))
        (desugar `(define ,name (lambda ,params . ,body)))))
     
+    ;; if
+    ((term-if? exp)
+     (let ((b (cadr exp))
+           (then (caddr exp))
+           (else (cadddr exp)))
+       `(boolean ,(desugar b)
+                 (lambda () ,(desugar then))
+                 (lambda () ,(desugar else)))))
     
     ;; cond
     ((term-cond? exp)
@@ -121,10 +165,35 @@
              ,(desugar (cadadr exp))
              ,(desugar `(cond . ,(cddr exp)))))))
     
+    ((term-and? exp)
+     (let ((v1 (cadr exp))
+           (v2 (caddr exp)))
+       (desugar `(if ,v1 ,v2 #f))))
+    
+    ((term-or? exp)
+     (let ((v1 (cadr exp))
+           (v2 (caddr exp)))
+       (desugar `(if ,v1 #t ,v2))))
+    
+    ((term-quote? exp)
+     exp)
+    ((term-quasiquote? exp)
+     (quasiquote-desugar (cadr exp)))
+    ((term-unquote? exp)
+     (error "unquote"))
     
     ((term-var? exp) exp)
     ((term-app? exp) (map desugar exp))
     (else exp)))
+
+(define (quasiquote-desugar term)
+  (cond
+   ((term-unquote? term)
+    (cadr term))
+   ((pair? term)
+    `(cons ,(quasiquote-desugar (car term))
+           ,(quasiquote-desugar (cdr term))))
+   (else `(quote ,term))))
 
 (define (test-let)
   (equal? (desugar '(let ((a 1)) a))
@@ -133,3 +202,12 @@
 (define (test-let*)
   (equal? (desugar '(let* ((a 1)(b a)) (+ a b)))
           '((lambda (a) ((lambda (b) (+ a b)) a)) 1)))
+
+(define (test-if)
+  (equal? (desugar '(if b thn els))
+          '(bool b (lambda () thn) (lambda () els))))
+
+(define (test-quasi)
+  (pretty-print (quasiquote-desugar '(f x ,y z)))
+  (pretty-print (quasiquote-desugar '(make-closure (lambda (env . ,args) ,((closure-convert free-variables) body))
+                                                   (vector . ,free-variables)))))
