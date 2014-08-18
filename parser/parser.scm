@@ -1,3 +1,5 @@
+;; depends on utility/list.scm
+
 (define (collector) ;; TODO switch over to the collector in utility
   ;; collect elements into a list and ask for its value
   ;; 
@@ -41,6 +43,7 @@
 (define (classify char)
   (cond ((eof-object? char) 'eof)
         ((whitespace? char) 'whitespace)
+        ((equal? char #\.) 'dot)
         ((symbolic? char) 'symbolic)
         ((equal? char #\") 'string-quote)
         ((equal? char #\') 'lisp-quote)
@@ -50,12 +53,16 @@
         (else 'unknown)))
 
 (define (read-symbol input-stream)
-  (let loop ((sym (collector)))
-    (if (symbolic? (peek-char input-stream))
-        (begin
-          (sym (read-char input-stream))
-          (loop sym))
-        (string->symbol (list->string (sym))))))
+  (let ((create-symbol (lambda (chars)
+                         (if (all char-numeric? chars)
+                             (string->number (list->string chars))
+                             (string->symbol (list->string chars))))))
+    (let loop ((sym (collector)))
+      (if (symbolic? (peek-char input-stream))
+          (begin
+            (sym (read-char input-stream))
+            (loop sym))
+          (create-symbol (sym))))))
 
 (define (read-string input-stream)
   (read-char input-stream) ;; we assume this is #\"
@@ -126,8 +133,18 @@
         (read-char input-stream)
         (sexps))
       (begin
-        (sexps (scm-read get-line input-stream))
-        (scm-read* sexps get-line input-stream))))
+        (skip-whitespace input-stream)
+        (if (equal? 'dot (classify (peek-char input-stream)))
+            (begin (read-char input-stream)
+                   (let ((result (append (sexps) (scm-read get-line input-stream))))
+                     (skip-whitespace input-stream)
+                     (if (or (eof-object? (peek-char input-stream))
+                             (equal? #\) (peek-char input-stream)))
+                         (read-char input-stream)
+                         (error "stuff after dot"))
+                     result))
+            (begin (sexps (scm-read get-line input-stream))
+                   (scm-read* sexps get-line input-stream))))))
 
 (define (wrap-port-with-line-tracking port)
   (let ((line 1))

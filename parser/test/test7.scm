@@ -1,4 +1,2 @@
-(define-syntax when
-  (syntax-rules ()
-    ((when <cond> <body> ...)
-     (if <cond> (begin <body> ...) (values)))))
+(begin (f . g)
+       (a x (y . z) . b))
