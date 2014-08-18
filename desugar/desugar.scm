@@ -165,19 +165,11 @@
                    ,@body))))
 
     ;; (define foo 1)
-<<<<<<< HEAD
     ;; ((term-define? exp)
     ;;  (let ((name (cadr exp))
     ;;        (value (caddr exp)))
     ;;    (desugar `(let ((,name '()))
     ;;                (set! ,name ,(desugar value))))))
-=======
-    ((term-define? exp)
-     (let ((name (cadr exp))
-           (value (caddr exp)))
-       (desugar `(let ((,name (void)))
-                   (set! ,name ,(desugar value))))))
->>>>>>> 57ef05254c970e56886d8e4f03c219d618d0d7fc
     
     ;; (define (foo a) a ...)
     ((term-define-procedure? exp)
