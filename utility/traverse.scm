@@ -26,7 +26,7 @@
 
 ;; Traversal functions
 
-(define (traverse string-case number-case variable-case lambda-case application-case)
+(define (traverse string-case number-case boolean-case variable-case lambda-case application-case)
   ;; t ::= v
   ;;     | (lambda (v ...) t)
   ;;     | (t ...)
@@ -35,6 +35,8 @@
            (string-case t))
           ((number? t)
            (number-case t))
+          ((boolean? t)
+           (boolean-case t))
           ((variable-form? t)
            (variable-case t))
           ((lambda-form? t)
@@ -44,7 +46,7 @@
            (application-case t))
           (else (error (cons t "traverse"))))))
 
-(define (traverse* string-case number-case variable-case lambda*-case application-case)
+(define (traverse* string-case number-case boolean-case variable-case lambda*-case application-case)
   ;; f ::= v
   ;;     | (lambda* (v ...) (v ...) f)
   ;;                        ^^^^^^--- free variables added here
@@ -54,6 +56,8 @@
            (string-case t))
           ((number? t)
            (number-case t))
+          ((boolean? t)
+           (boolean-case t))
           ((variable-form? t)
            (variable-case t))
           ((lambda*-form? t)

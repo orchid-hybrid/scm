@@ -7,6 +7,8 @@
               (cons s '()))
             (lambda (n)
               (cons n '()))
+            (lambda (b)
+              (cons b '()))
             (lambda (v)
               (cons v (list v)))
             (lambda (args body)
@@ -27,6 +29,8 @@
                s)
              (lambda (n)
                n)
+             (lambda (b)
+               b)
              (lambda (v)
                (let ((i (list-index v free-variables)))
                  (if i

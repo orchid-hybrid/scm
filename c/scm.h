@@ -2,8 +2,11 @@
 #include <stdio.h>
 
 enum scm_type {
+  scm_type_number,
+  scm_type_boolean,
   scm_type_string,
   scm_type_vector,
+  scm_type_nil,
   scm_type_pair,
   scm_type_fptr
 };
@@ -15,6 +18,7 @@ typedef scm (*scm_fptr)();
 struct scm {
   enum scm_type t;
   union {
+    int n;
     char *s;
     struct scm* v;
     struct {

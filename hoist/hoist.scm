@@ -5,6 +5,8 @@
               s)
             (lambda (n)
               n)
+            (lambda (b)
+              b)
             (lambda (v)
               v)
             (lambda (args body)
