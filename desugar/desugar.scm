@@ -58,6 +58,14 @@
        (list? (cadr exp))
        (equal? 'let* (car exp))))
 
+;; (let a ((b c)) (a c))
+(define (term-name-let? exp)
+  (and (list? exp)
+       (>= (length exp) 4)
+       (symbol? (cadr exp))
+       (list? (caddr exp))
+       (equal? 'let (car exp))))
+
 (define (term-letrec? exp)
   (and (list? exp)
        (>= (length exp) 3)
