@@ -71,6 +71,23 @@ scm scm_invoke_closure3(scm clos, scm p1, scm p2) {
   return code(env,p1,p2);
 }
 
+scm scm_wrap_prim(scm_fptr prim) {
+  return scm_make_closure(prim, scm_vector0());
+}
+
 scm scm_print(scm* env, scm s) {
   puts(s.v.s);
+}
+
+scm scm_add(scm* env, scm s) {
+ 
+}
+scm scm_mul(scm* env, scm s) {
+  
+}
+scm scm_sub(scm* env, scm s) {
+  
+}
+scm scm_num_eq(scm* env, scm s) {
+  
 }

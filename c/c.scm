@@ -38,8 +38,37 @@
                             (cdr args)))))
          (display ")"))))
 
+(define (prim? exp)
+  (or (eq? exp '+)
+      (eq? exp '-)
+      (eq? exp '*)
+      (eq? exp '=)
+      (eq? exp 'print)))
+
+(define (rename-prim p)
+  (cond
+    ((eq? '+ p)       "__add")
+    ((eq? '- p)       "__sub")
+    ((eq? '* p)       "__mul")
+    ((eq? '= p)       "__num_eq")
+    ((eq? 'print p) "__print")
+    (else             (error "unhandled primitive: " p))))
+
+(define (emit-prim-prelude)
+  (for-each
+   (lambda (c) (display c) (newline))
+   (list
+    "scm __print = scm_wrap_prim(scm_print);" 
+    "scm __add = scm_wrap_prim(scm_add);"
+    "scm __sub = scm_wrap_prim(scm_sub);" 
+    "scm __mul = scm_wrap_prim(scm_mul);" 
+    "scm __num_eq = scm_wrap_prim(scm_num_eq);")))
+
+
 (define (emit-c term)
-  (cond ((number? term)
+  (cond ((prim? term)
+	 (display (rename-prim term)))
+	((number? term)
          (display term))
         ((string? term)
          (display "scm_string")
@@ -51,6 +80,7 @@
         ((list? term)
          (emit-call (car term) (cdr term)))
         (else (error term "emit-c!"))))
+
 
 (define (test-c term)
   (let ((collector (make-collector)))
@@ -86,10 +116,11 @@
                 definitions)
       (display "void main() {")
       (newline)
+      (emit-prim-prelude)
+      (newline)
       (display "  ")
       (emit-c main)
       (display ";")
       (newline)
       (display "}")
-      (newline)
-      )))
+      (newline))))
