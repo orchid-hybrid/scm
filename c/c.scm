@@ -50,6 +50,9 @@
     (cons "__cons" "scm_cons")
     (car "__car" "scm_car")
     (cdr "__cdr" "scm_cdr")
+    
+    (boolean "__boolean" "scm_boolean")
+    (null? "__null_question" "scm_null_question")
     ))
 
 (define (prim? exp)

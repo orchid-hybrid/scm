@@ -35,6 +35,25 @@ scm scm_vector3(scm v0, scm v1, scm v2) {
   return (scm){ .t = scm_type_vector, .v.v = v };
 }
 
+scm scm_vector4(scm v0, scm v1, scm v2, scm v3) {
+  scm *v = malloc(4*sizeof(scm));
+  v[0] = v0;
+  v[1] = v1;
+  v[2] = v2;
+  v[3] = v3;
+  return (scm){ .t = scm_type_vector, .v.v = v };
+}
+
+scm scm_vector5(scm v0, scm v1, scm v2, scm v3, scm v4) {
+  scm *v = malloc(5*sizeof(scm));
+  v[0] = v0;
+  v[1] = v1;
+  v[2] = v2;
+  v[3] = v3;
+  v[4] = v4;
+  return (scm){ .t = scm_type_vector, .v.v = v };
+}
+
 scm scm_make_pair(scm car, scm cdr) {
   scm p;
   
@@ -76,13 +95,23 @@ scm scm_invoke_closure2(scm clos, scm p1) {
 }
 
 scm scm_invoke_closure3(scm clos, scm p1, scm p2) {
-  if(clos.t != scm_type_pair) { puts("!!PAIR"); exit(0); }
-  if(clos.v.cons.car->t != scm_type_fptr) { puts("!!FPTR"); exit(0); }
-  if(clos.v.cons.cdr->t != scm_type_vector) { puts("!!VECTOR"); exit(0); }
+  if(clos.t != scm_type_pair) { puts("!PAIR"); exit(0); }
+  if(clos.v.cons.car->t != scm_type_fptr) { puts("!FPTR"); exit(0); }
+  if(clos.v.cons.cdr->t != scm_type_vector) { puts("!VECTOR"); exit(0); }
   
   scm_fptr code = clos.v.cons.car->v.f;
   scm* env = clos.v.cons.cdr->v.v;
   return code(env,p1,p2);
+}
+
+scm scm_invoke_closure4(scm clos, scm p1, scm p2, scm p3) {
+  if(clos.t != scm_type_pair) { puts("!PAIR"); exit(0); }
+  if(clos.v.cons.car->t != scm_type_fptr) { puts("!FPTR"); exit(0); }
+  if(clos.v.cons.cdr->t != scm_type_vector) { puts("!VECTOR"); exit(0); }
+  
+  scm_fptr code = clos.v.cons.car->v.f;
+  scm* env = clos.v.cons.cdr->v.v;
+  return code(env,p1,p2,p3);
 }
 
 scm scm_wrap_prim(scm_fptr prim) {
@@ -120,4 +149,19 @@ scm scm_sub(scm* env, scm s) {
 }
 scm scm_num_eq(scm* env, scm s) {
   
+}
+
+
+scm scm_boolean(scm* env, scm b, scm thn, scm els) {
+  //assert(b.t == scm_type_boolean);
+  if(b.t == scm_type_boolean &&
+     b.v.n == 0) {
+    return scm_invoke_closure1(els);
+  }
+  return scm_invoke_closure1(thn);
+}
+scm scm_null_question(scm* env, scm n) {
+  if(n.t == scm_type_null)
+    return (scm){ .t = scm_type_boolean, .v.n = 1 };
+  return (scm){ .t = scm_type_boolean, .v.n = 0 };
 }

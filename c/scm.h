@@ -38,6 +38,8 @@ scm scm_vector0();
 scm scm_vector1(scm v0);
 scm scm_vector2(scm v0, scm v1);
 scm scm_vector3(scm v0, scm v1, scm v2);
+scm scm_vector4(scm v0, scm v1, scm v2, scm v3);
+scm scm_vector5(scm v0, scm v1, scm v2, scm v3, scm v4);
 
 scm scm_make_pair(scm car, scm cdr);
 scm scm_make_symbol(char *s);
@@ -46,6 +48,7 @@ scm scm_make_closure(scm_fptr code, scm env);
 scm scm_invoke_closure1(scm clos);
 scm scm_invoke_closure2(scm clos, scm p1);
 scm scm_invoke_closure3(scm clos, scm p1, scm p2);
+scm scm_invoke_closure4(scm clos, scm p1, scm p2, scm p3);
 
 // PRIMITIVES
 
@@ -62,3 +65,6 @@ scm scm_add(scm* env, scm s);
 scm scm_mul(scm* env, scm s);
 scm scm_sub(scm* env, scm s);
 scm scm_num_eq(scm* env, scm s);
+
+scm scm_boolean(scm* env, scm b, scm thn, scm els);
+scm scm_null_question(scm* env, scm n);
