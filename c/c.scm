@@ -273,6 +273,7 @@
                 ((car sets)))
       (newline)
       (display "  ")
+      (display "scm_invoke_closure1(moo);")
       ;;(emit-c main)
       ;;(display ";")
       (newline)
