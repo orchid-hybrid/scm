@@ -6,7 +6,7 @@ enum scm_type {
   scm_type_boolean,
   scm_type_string,
   scm_type_vector,
-  scm_type_nil,
+  scm_type_null,
   scm_type_pair,
   scm_type_fptr
 };

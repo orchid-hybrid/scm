@@ -3,7 +3,12 @@
     (if (equal? char #\-)
         #\_
         char))
-  (list->string (map hyphen-down (string->list (symbol->string s)))))
+  (define (question-down char)
+    (if (equal? char #\?)
+        (list #\_ #\q #\u #\e #\s #\t #\i #\o #\n)
+        (list char)))
+  (list->string (apply append (map question-down
+       (map hyphen-down (string->list (symbol->string s)))))))
 
 (define (mangle* s n)
   (let ((m (mangle s)))
@@ -195,8 +200,8 @@
                     #t
                     (begin
                       ;; (define value make-closure ...
-                      ((cdr declarations) (cadr definition))
-                      ((cdr sets) (cons (cadr definition)
+                      ((cdr declarations) (mangle (cadr definition)))
+                      ((cdr sets) (cons (mangle (cadr definition))
                                         (caddr definition)))
                       )))
               definitions)
