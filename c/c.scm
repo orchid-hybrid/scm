@@ -102,10 +102,10 @@
          (display (string-append "(scm){ .t = scm_type_number, .v.n = "
                                  (string-append (number->string term) " }"))))
 	((boolean? term)
-         (if term
-             "(scm){ .t = scm_type_boolean, .v.n = 1 }"
-             "(scm){ .t = scm_type_boolean, .v.n = 0 }"))
-        ((string? term)
+         (display (if term
+		      "(scm){ .t = scm_type_boolean, .v.n = 1 }"
+		      "(scm){ .t = scm_type_boolean, .v.n = 0 }")))
+	 ((string? term)
          (display "scm_string")
          (display "(")
          (display (string-quote term))
