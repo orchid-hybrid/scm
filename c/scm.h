@@ -43,6 +43,7 @@ scm* scm_vector3(scm *v0, scm *v1, scm *v2);
 scm* scm_vector4(scm *v0, scm *v1, scm *v2, scm *v3);
 scm* scm_vector5(scm *v0, scm *v1, scm *v2, scm *v3, scm *v4);
 scm* scm_vector6(scm *v0, scm *v1, scm *v2, scm *v3, scm *v4, scm *v5);
+scm* scm_vector7(scm *v0, scm *v1, scm *v2, scm *v3, scm *v4, scm *v5, scm *v6);
 
 scm* scm_make_pair(scm* car, scm* cdr);
 scm* scm_make_symbol(char *s);
@@ -72,3 +73,4 @@ scm* scm_num_eq(scm* env, scm* s);
 
 scm* scm_boolean(scm* env, scm* b, scm* thn, scm* els);
 scm* scm_null_question(scm* env, scm* n);
+scm* scm_eq_question(scm* env, scm* a, scm* b);

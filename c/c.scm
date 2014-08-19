@@ -59,6 +59,7 @@
     
     (boolean "__boolean" "scm_boolean")
     (null? "__null_question" "scm_null_question")
+    (eq? "__eq_question" "scm_eq_question")
     ))
 
 (define (prim? exp)

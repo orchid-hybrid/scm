@@ -71,6 +71,18 @@ scm* scm_vector6(scm *v0, scm *v1, scm *v2, scm *v3, scm *v4, scm *v5) {
   return scmalloc((scm){ .t = scm_type_vector, .v.v = v });
 }
 
+scm* scm_vector7(scm *v0, scm *v1, scm *v2, scm *v3, scm *v4, scm *v5, scm *v6) {
+  scm **v = malloc(7*sizeof(scm*));
+  v[0] = v0;
+  v[1] = v1;
+  v[2] = v2;
+  v[3] = v3;
+  v[4] = v4;
+  v[5] = v5;
+  v[6] = v6;
+  return scmalloc((scm){ .t = scm_type_vector, .v.v = v });
+}
+
 scm* scm_make_pair(scm* car, scm* cdr) {
   scm p;
   
@@ -191,5 +203,15 @@ scm *scm_boolean(scm* env, scm* b, scm* thn, scm* els) {
 scm *scm_null_question(scm* env, scm* n) {
   if(n->t == scm_type_null)
     return scmalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
+  return scmalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
+}
+
+scm* scm_eq_question(scm* env, scm* a, scm* b) {
+  if(a->t != b->t) return scmalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
+  
+  if(a->t == scm_type_symbol &&
+     !strcmp(a->v.s,b->v.s))
+    return scmalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
+  
   return scmalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
 }
