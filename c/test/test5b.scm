@@ -1,0 +1,7 @@
+(define (moo)
+  (begin (if (null? '())
+             (print "hoo")
+             (print "boy"))
+         (if (null? '(a))
+             (print "hoo")
+             (print "boy"))))

@@ -5,7 +5,7 @@
   (if (null? l)
       777
       (begin
-        (print l)
+        (print (car l))
         (print-list (cdr l)))))
 
 (define (moo)
