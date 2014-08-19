@@ -172,10 +172,10 @@ scm* scm_add(scm* env, scm* s) {
 scm* scm_mul(scm* env, scm* s) {
   
 }
-scm* scm_sub(scm* env, scm* s) {
+scm *scm_sub(scm* env, scm* s) {
   
 }
-scm* scm_num_eq(scm* env, scm* s) {
+scm *scm_num_eq(scm* env, scm* s) {
   
 }
 
