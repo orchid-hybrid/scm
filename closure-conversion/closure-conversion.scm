@@ -40,9 +40,9 @@
                  (if i
                      `(vector-ref env ,i)
                      v)))
-             (lambda (args free-variables body)
-               `(make-closure (lambda (env . ,args) ,((closure-convert free-variables) body))
-                              (vector . ,free-variables)))
+             (lambda (args new-free-variables body)
+               `(make-closure (lambda (env . ,args) ,((closure-convert new-free-variables) body))
+                              (vector . ,(map (closure-convert free-variables) new-free-variables))))
              (lambda (terms)
                (if (and (not (null? terms))
                         (equal? (car terms) 'quote))
