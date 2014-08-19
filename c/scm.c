@@ -2,59 +2,65 @@
 
 #include <assert.h>
 
-scm scm_string(char *s) {
-  return (scm){ .t = scm_type_string, .v.s = s };
+scm *scmalloc(scm s) {
+  scm *sp = malloc(sizeof(scm));
+  *sp = s;
+  return sp;
 }
 
-scm scm_vector_ref(scm vec, int i) {
-  return *vec.v.v[i];
+scm* scm_string(char *s) {
+  return scmalloc((scm){ .t = scm_type_string, .v.s = s });
 }
 
-scm scm_vector0() {
-  return (scm){ .t = scm_type_vector, .v.v = NULL };
+scm* scm_vector_ref(scm *vec, int i) {
+  return vec->v.v[i];
 }
 
-scm scm_vector1(scm *v0) {
+scm* scm_vector0() {
+  return scmalloc((scm){ .t = scm_type_vector, .v.v = NULL });
+}
+
+scm* scm_vector1(scm *v0) {
   scm **v = malloc(sizeof(scm*));
   v[0] = v0;
-  return (scm){ .t = scm_type_vector, .v.v = v };
+  return scmalloc((scm){ .t = scm_type_vector, .v.v = v });
 }
 
-scm scm_vector2(scm *v0, scm *v1) {
+scm* scm_vector2(scm *v0, scm *v1) {
   scm **v = malloc(2*sizeof(scm*));
   v[0] = v0;
   v[1] = v1;
-  return (scm){ .t = scm_type_vector, .v.v = v };
+  return scmalloc((scm){ .t = scm_type_vector, .v.v = v });
 }
 
-scm scm_vector3(scm *v0, scm *v1, scm *v2) {
+scm* scm_vector3(scm *v0, scm *v1, scm *v2) {
   scm **v = malloc(3*sizeof(scm*));
   v[0] = v0;
   v[1] = v1;
   v[2] = v2;
-  return (scm){ .t = scm_type_vector, .v.v = v };
+  return scmalloc((scm){ .t = scm_type_vector, .v.v = v });
 }
 
-scm scm_vector4(scm *v0, scm *v1, scm *v2, scm *v3) {
+scm* scm_vector4(scm *v0, scm *v1, scm *v2, scm *v3) {
   scm **v = malloc(4*sizeof(scm*));
   v[0] = v0;
   v[1] = v1;
   v[2] = v2;
   v[3] = v3;
-  return (scm){ .t = scm_type_vector, .v.v = v };
+  return scmalloc((scm){ .t = scm_type_vector, .v.v = v });
 }
 
-scm scm_vector5(scm *v0, scm *v1, scm *v2, scm *v3, scm *v4) {
+scm* scm_vector5(scm *v0, scm *v1, scm *v2, scm *v3, scm *v4) {
   scm **v = malloc(5*sizeof(scm*));
   v[0] = v0;
   v[1] = v1;
   v[2] = v2;
   v[3] = v3;
   v[4] = v4;
-  return (scm){ .t = scm_type_vector, .v.v = v };
+  return scmalloc((scm){ .t = scm_type_vector, .v.v = v });
 }
 
-scm scm_vector6(scm *v0, scm *v1, scm *v2, scm *v3, scm *v4, scm *v5) {
+scm* scm_vector6(scm *v0, scm *v1, scm *v2, scm *v3, scm *v4, scm *v5) {
   scm **v = malloc(6*sizeof(scm*));
   v[0] = v0;
   v[1] = v1;
@@ -62,127 +68,128 @@ scm scm_vector6(scm *v0, scm *v1, scm *v2, scm *v3, scm *v4, scm *v5) {
   v[3] = v3;
   v[4] = v4;
   v[5] = v5;
-  return (scm){ .t = scm_type_vector, .v.v = v };
+  return scmalloc((scm){ .t = scm_type_vector, .v.v = v });
 }
 
-scm scm_make_pair(scm car, scm cdr) {
+scm* scm_make_pair(scm* car, scm* cdr) {
   scm p;
   
   p.t = scm_type_pair;
-  p.v.cons.car = malloc(sizeof(scm));
-  *p.v.cons.car = car;
-  p.v.cons.cdr = malloc(sizeof(scm));
-  *p.v.cons.cdr = cdr;
+  p.v.cons.car = car;
+  p.v.cons.cdr = cdr;
   
-  return p;
+  return scmalloc(p);
 }
 
-scm scm_make_symbol(char *s) {
-  return (scm){ .t = scm_type_symbol, .v.s = s };
+scm* scm_make_symbol(char *s) {
+  return scmalloc((scm){ .t = scm_type_symbol, .v.s = s });
 }
 
-scm scm_make_closure(scm_fptr code, scm env) {
-  return scm_make_pair((scm){ .t = scm_type_fptr, .v.f = code}, env);
+scm* scm_make_closure(scm_fptr code, scm* env) {
+  return scm_make_pair(scmalloc((scm){ .t = scm_type_fptr, .v.f = code}), env);
 }
 
-scm scm_invoke_closure1(scm clos) {
-  if(clos.t != scm_type_pair) { puts("!PAIR"); exit(0); }
-  if(clos.v.cons.car->t != scm_type_fptr) { puts("!FPTR"); exit(0); }
-  if(clos.v.cons.cdr->t != scm_type_vector) { puts("!VECTOR"); exit(0); }
+scm* scm_invoke_closure1(scm *clos) {
+  if(clos->t != scm_type_pair) { puts("!PAIR"); exit(0); }
+  if(clos->v.cons.car->t != scm_type_fptr) { puts("!FPTR"); exit(0); }
+  if(clos->v.cons.cdr->t != scm_type_vector) { puts("!VECTOR"); exit(0); }
   
-  scm_fptr code = clos.v.cons.car->v.f;
-  scm** env = clos.v.cons.cdr->v.v;
+  scm_fptr code = clos->v.cons.car->v.f;
+  scm** env = clos->v.cons.cdr->v.v;
   return code(env);
 }
 
-scm scm_invoke_closure2(scm clos, scm p1) {
-  if(clos.t != scm_type_pair) { puts("!PAIR"); exit(0); }
-  if(clos.v.cons.car->t != scm_type_fptr) { puts("!FPTR"); exit(0); }
-  if(clos.v.cons.cdr->t != scm_type_vector) { puts("!VECTOR"); exit(0); }
+scm* scm_invoke_closure2(scm *clos, scm *p1) {
+  if(clos->t != scm_type_pair) { puts("!PAIR"); exit(0); }
+  if(clos->v.cons.car->t != scm_type_fptr) { puts("!FPTR"); exit(0); }
+  if(clos->v.cons.cdr->t != scm_type_vector) { puts("!VECTOR"); exit(0); }
   
-  scm_fptr code = clos.v.cons.car->v.f;
-  scm** env = clos.v.cons.cdr->v.v;
+  scm_fptr code = clos->v.cons.car->v.f;
+  scm** env = clos->v.cons.cdr->v.v;
   return code(env,p1);
 }
 
-scm scm_invoke_closure3(scm clos, scm p1, scm p2) {
-  if(clos.t != scm_type_pair) { puts("!PAIR"); exit(0); }
-  if(clos.v.cons.car->t != scm_type_fptr) { puts("!FPTR"); exit(0); }
-  if(clos.v.cons.cdr->t != scm_type_vector) { puts("!VECTOR"); exit(0); }
+scm* scm_invoke_closure3(scm *clos, scm *p1, scm *p2) {
+  if(clos->t != scm_type_pair) { puts("!PAIR"); exit(0); }
+  if(clos->v.cons.car->t != scm_type_fptr) { puts("!FPTR"); exit(0); }
+  if(clos->v.cons.cdr->t != scm_type_vector) { puts("!VECTOR"); exit(0); }
   
-  scm_fptr code = clos.v.cons.car->v.f;
-  scm** env = clos.v.cons.cdr->v.v;
+  scm_fptr code = clos->v.cons.car->v.f;
+  scm** env = clos->v.cons.cdr->v.v;
   return code(env,p1,p2);
 }
 
-scm scm_invoke_closure4(scm clos, scm p1, scm p2, scm p3) {
-  if(clos.t != scm_type_pair) { puts("!PAIR"); exit(0); }
-  if(clos.v.cons.car->t != scm_type_fptr) { puts("!FPTR"); exit(0); }
-  if(clos.v.cons.cdr->t != scm_type_vector) { puts("!VECTOR"); exit(0); }
+scm* scm_invoke_closure4(scm *clos, scm *p1, scm *p2, scm *p3) {
+  if(clos->t != scm_type_pair) { puts("!PAIR"); exit(0); }
+  if(clos->v.cons.car->t != scm_type_fptr) { puts("!FPTR"); exit(0); }
+  if(clos->v.cons.cdr->t != scm_type_vector) { puts("!VECTOR"); exit(0); }
   
-  scm_fptr code = clos.v.cons.car->v.f;
-  scm** env = clos.v.cons.cdr->v.v;
+  scm_fptr code = clos->v.cons.car->v.f;
+  scm** env = clos->v.cons.cdr->v.v;
   return code(env,p1,p2,p3);
 }
 
-scm scm_invoke_closure5(scm clos, scm p1, scm p2, scm p3, scm p4) {
-  if(clos.t != scm_type_pair) { puts("!PAIR"); exit(0); }
-  if(clos.v.cons.car->t != scm_type_fptr) { puts("!FPTR"); exit(0); }
-  if(clos.v.cons.cdr->t != scm_type_vector) { puts("!VECTOR"); exit(0); }
+scm* scm_invoke_closure5(scm *clos, scm *p1, scm *p2, scm *p3, scm *p4) {
+  if(clos->t != scm_type_pair) { puts("!PAIR"); exit(0); }
+  if(clos->v.cons.car->t != scm_type_fptr) { puts("!FPTR"); exit(0); }
+  if(clos->v.cons.cdr->t != scm_type_vector) { puts("!VECTOR"); exit(0); }
   
-  scm_fptr code = clos.v.cons.car->v.f;
-  scm** env = clos.v.cons.cdr->v.v;
+  scm_fptr code = clos->v.cons.car->v.f;
+  scm** env = clos->v.cons.cdr->v.v;
   return code(env,p1,p2,p3,p4);
 }
 
-scm scm_wrap_prim(scm_fptr prim) {
+
+scm* scm_wrap_prim(scm_fptr prim) {
   return scm_make_closure(prim, scm_vector0());
 }
 
-scm scm_print(scm* env, scm s) {
-  puts(s.v.s);
+scm* scm_print(scm* env, scm *s) {
+  puts(s->v.s);
+  return NULL;
 }
 
-scm scm_newline(scm* env) {
+scm* scm_newline(scm* env) {
   puts("");
+  return NULL;
 }
 
-scm scm_cons(scm* env, scm car, scm cdr) {
+scm* scm_cons(scm* env, scm *car, scm *cdr) {
   return scm_make_pair(car,cdr);
 }
-scm scm_car(scm* env, scm pair) {
-  assert(pair.t == scm_type_pair);
-  return *pair.v.cons.car;
+scm* scm_car(scm* env, scm* pair) {
+  assert(pair->t == scm_type_pair);
+  return pair->v.cons.car;
 }
-scm scm_cdr(scm* env, scm pair) {
-  assert(pair.t == scm_type_pair);
-  return *pair.v.cons.cdr;
+scm* scm_cdr(scm* env, scm* pair) {
+  assert(pair->t == scm_type_pair);
+  return pair->v.cons.cdr;
 }
 
-scm scm_add(scm* env, scm s) {
+scm* scm_add(scm* env, scm* s) {
  
 }
-scm scm_mul(scm* env, scm s) {
+scm* scm_mul(scm* env, scm* s) {
   
 }
-scm scm_sub(scm* env, scm s) {
+scm* scm_sub(scm* env, scm* s) {
   
 }
-scm scm_num_eq(scm* env, scm s) {
+scm* scm_num_eq(scm* env, scm* s) {
   
 }
 
 
-scm scm_boolean(scm* env, scm b, scm thn, scm els) {
+scm *scm_boolean(scm* env, scm* b, scm* thn, scm* els) {
   //assert(b.t == scm_type_boolean);
-  if(b.t == scm_type_boolean &&
-     b.v.n == 0) {
+  if(b->t == scm_type_boolean &&
+     b->v.n == 0) {
     return scm_invoke_closure1(els);
   }
   return scm_invoke_closure1(thn);
 }
-scm scm_null_question(scm* env, scm n) {
-  if(n.t == scm_type_null)
-    return (scm){ .t = scm_type_boolean, .v.n = 1 };
-  return (scm){ .t = scm_type_boolean, .v.n = 0 };
+scm *scm_null_question(scm* env, scm* n) {
+  if(n->t == scm_type_null)
+    return scmalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
+  return scmalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
 }
