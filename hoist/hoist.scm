@@ -7,6 +7,8 @@
               n)
             (lambda (b)
               b)
+            (lambda (q)
+              `(quote ,q))
             (lambda (v)
               v)
             (lambda (args body)

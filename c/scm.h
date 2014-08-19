@@ -5,6 +5,7 @@ enum scm_type {
   scm_type_number,
   scm_type_boolean,
   scm_type_string,
+  scm_type_symbol,
   scm_type_vector,
   scm_type_null,
   scm_type_pair,
@@ -39,6 +40,7 @@ scm scm_vector2(scm v0, scm v1);
 scm scm_vector3(scm v0, scm v1, scm v2);
 
 scm scm_make_pair(scm car, scm cdr);
+scm scm_make_symbol(char *s);
 
 scm scm_make_closure(scm_fptr code, scm env);
 scm scm_invoke_closure1(scm clos);

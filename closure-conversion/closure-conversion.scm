@@ -9,6 +9,8 @@
               (cons n '()))
             (lambda (b)
               (cons b '()))
+             (lambda (q)
+               (cons `(quote ,q) '()))
             (lambda (v)
               (cons v (list v)))
             (lambda (args body)
@@ -31,6 +33,8 @@
                n)
              (lambda (b)
                b)
+             (lambda (q)
+               `(quote ,q))
              (lambda (v)
                (let ((i (list-index v free-variables)))
                  (if i

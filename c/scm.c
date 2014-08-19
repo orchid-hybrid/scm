@@ -47,6 +47,10 @@ scm scm_make_pair(scm car, scm cdr) {
   return p;
 }
 
+scm scm_make_symbol(char *s) {
+  return (scm){ .t = scm_type_symbol, .v.s = s };
+}
+
 scm scm_make_closure(scm_fptr code, scm env) {
   return scm_make_pair((scm){ .t = scm_type_fptr, .v.f = code}, env);
 }
