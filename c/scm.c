@@ -1,5 +1,7 @@
 #include "scm.h"
 
+#include <assert.h>
+
 scm scm_string(char *s) {
   return (scm){ .t = scm_type_string, .v.s = s };
 }
@@ -22,6 +24,14 @@ scm scm_vector2(scm v0, scm v1) {
   scm *v = malloc(2*sizeof(scm));
   v[0] = v0;
   v[1] = v1;
+  return (scm){ .t = scm_type_vector, .v.v = v };
+}
+
+scm scm_vector3(scm v0, scm v1, scm v2) {
+  scm *v = malloc(3*sizeof(scm));
+  v[0] = v0;
+  v[1] = v1;
+  v[2] = v2;
   return (scm){ .t = scm_type_vector, .v.v = v };
 }
 
@@ -81,6 +91,18 @@ scm scm_print(scm* env, scm s) {
 
 scm scm_newline(scm* env) {
   puts("");
+}
+
+scm scm_cons(scm* env, scm car, scm cdr) {
+  return scm_make_pair(car,cdr);
+}
+scm scm_car(scm* env, scm pair) {
+  assert(pair.t == scm_type_pair);
+  return *pair.v.cons.car;
+}
+scm scm_cdr(scm* env, scm pair) {
+  assert(pair.t == scm_type_pair);
+  return *pair.v.cons.cdr;
 }
 
 scm scm_add(scm* env, scm s) {

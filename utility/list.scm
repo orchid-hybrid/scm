@@ -5,6 +5,13 @@
           (all p (cdr l))
           #f)))
 
+(define (any p l)
+  (if (null? l)
+      #f
+      (if (p (car l))
+          #t
+          (any p (cdr l)))))
+
 (define (list-index* i elt list)
   (if (null? list)
       #f

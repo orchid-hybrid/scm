@@ -43,45 +43,43 @@
                             (cdr args)))))
          (display ")"))))
 
+(define (primitives)
+  '((print "__print" "scm_print")
+    (newline "__newline" "scm_newline")
+    
+    (cons "__cons" "scm_cons")
+    (car "__car" "scm_car")
+    (cdr "__cdr" "scm_cdr")
+    ))
+
 (define (prim? exp)
-  (or (eq? exp '+)
-      (eq? exp '-)
-      (eq? exp '*)
-      (eq? exp '=)
-      (eq? exp 'print)
-      (eq? exp 'newline)))
+  (any (lambda (prim)
+         (eq? exp (car prim)))
+       (primitives)))
 
 (define (rename-prim p)
   (cond
-    ((eq? '+ p)       "__add")
-    ((eq? '- p)       "__sub")
-    ((eq? '* p)       "__mul")
-    ((eq? '= p)       "__num_eq")
-    ((eq? 'print p) "__print")
-    ((eq? 'newline p) "__newline")
-    (else             (error "unhandled primitive: " p))))
+   ((assoc p (primitives)) => cadr)
+   (else             (error "unhandled primitive: " p))))
 
 (define (emit-prim-prelude-prelude)
   (for-each
-   (lambda (c) (display c) (newline))
-   (list
-    "scm __print;"
-    "scm __newline;"
-    "scm __add;"
-    "scm __sub;"
-    "scm __mul;"
-    "scm __num_eq;")))
+   (lambda (c)
+     (display "scm ")
+     (display (cadr c))
+     (display ";")
+     (newline))
+   (primitives)))
 
 (define (emit-prim-prelude)
   (for-each
-   (lambda (c) (display c) (newline))
-   (list
-    "__print = scm_wrap_prim(scm_print);" 
-    "__newline = scm_wrap_prim(scm_newline);" 
-    "__add = scm_wrap_prim(scm_add);"
-    "__sub = scm_wrap_prim(scm_sub);" 
-    "__mul = scm_wrap_prim(scm_mul);" 
-    "__num_eq = scm_wrap_prim(scm_num_eq);")))
+   (lambda (c)
+     (display (cadr c))
+     (display " = scm_wrap_prim(")
+     (display (caddr c))
+     (display ");")
+     (newline))
+   (primitives)))
 
 (define (self-evaluating-form? form)
   (null? form))

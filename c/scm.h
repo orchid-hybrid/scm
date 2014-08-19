@@ -36,6 +36,7 @@ scm scm_vector_ref(scm vec, int i);
 scm scm_vector0();
 scm scm_vector1(scm v0);
 scm scm_vector2(scm v0, scm v1);
+scm scm_vector3(scm v0, scm v1, scm v2);
 
 scm scm_make_pair(scm car, scm cdr);
 
@@ -44,9 +45,17 @@ scm scm_invoke_closure1(scm clos);
 scm scm_invoke_closure2(scm clos, scm p1);
 scm scm_invoke_closure3(scm clos, scm p1, scm p2);
 
+// PRIMITIVES
+
 scm scm_wrap_prim(scm_fptr prim);
+
 scm scm_print(scm* env, scm s);
 scm scm_newline(scm* env);
+
+scm scm_cons(scm* env, scm car, scm cdr);
+scm scm_car(scm* env, scm pair);
+scm scm_cdr(scm* env, scm pair);
+
 scm scm_add(scm* env, scm s);
 scm scm_mul(scm* env, scm s);
 scm scm_sub(scm* env, scm s);
