@@ -204,6 +204,16 @@ scm* scm_cdr(scm* env, scm* pair) {
   assert(pair->t == scm_type_pair);
   return pair->v.cons.cdr;
 }
+scm* scm_set_car(scm* env, scm* pair, scm *newcar) {
+  assert(pair->t == scm_type_pair);
+  pair->v.cons.car = newcar;
+  return NULL;
+}
+scm* scm_set_cdr(scm* env, scm* pair, scm *newcdr) {
+  assert(pair->t == scm_type_pair);
+  pair->v.cons.cdr = newcdr;
+  return NULL;
+}
 
 scm* scm_add(scm* env, scm* s) {
  

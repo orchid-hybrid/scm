@@ -67,6 +67,8 @@ scm* scm_newline(scm* env);
 scm* scm_cons(scm* env, scm* car, scm* cdr);
 scm* scm_car(scm* env, scm* pair);
 scm* scm_cdr(scm* env, scm* pair);
+scm* scm_set_car(scm* env, scm* pair, scm *newcar);
+scm* scm_set_cdr(scm* env, scm* pair, scm *newcdr);
 
 scm* scm_add(scm* env, scm* s);
 scm* scm_mul(scm* env, scm* s);

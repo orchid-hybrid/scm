@@ -6,7 +6,9 @@
   (define (question-down char)
     (if (equal? char #\?)
         (list #\_ #\q #\u #\e #\s #\t #\i #\o #\n)
-        (list char)))
+        (if (equal? char #\!)
+            (list #\_ #\b #\a #\n #\g)
+            (list char))))
   (list->string (apply append (map question-down
        (map hyphen-down (string->list (symbol->string s)))))))
 
@@ -56,6 +58,8 @@
     (cons "__cons" "scm_cons")
     (car "__car" "scm_car")
     (cdr "__cdr" "scm_cdr")
+    (set-car! "__set_car" "scm_set_car")
+    (set-cdr! "__set_cdr" "scm_set_cdr")
     
     (boolean "__boolean" "scm_boolean")
     (null? "__null_question" "scm_null_question")

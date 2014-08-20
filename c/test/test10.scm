@@ -68,7 +68,7 @@
     (print-list-forever (cdr (l)))))
 
 (define (moo)
-  (begin (print-list-list (take (pmul (p3) (p8)) (base1-fib (cons "1" '()) (cons "1" '()))))
+  (begin (print-list-list (take (pmul (p5) (p5)) (base1-fib (cons "1" '()) (cons "1" '()))))
          (newline)))
 
-
+;; ulimit -s 65536
