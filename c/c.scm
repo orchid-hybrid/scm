@@ -62,8 +62,15 @@
     (set-cdr! "__set_cdr" "scm_set_cdr")
     
     (boolean "__boolean" "scm_boolean")
-    (null? "__null_question" "scm_null_question")
     (eq? "__eq_question" "scm_eq_question")
+    (number? "__number_question" "scm_number_question")
+    (boolean? "__boolean_question" "scm_boolean_question")
+    (string? "__string_question" "scm_string_question")
+    (symbol? "__symbol_question" "scm_symbol_question")
+    (vector? "__vector_question" "scm_vector_question")
+    (null? "__null_question" "scm_null_question")
+    (pair? "__pair_question" "scm_pair_question")
+    (fptr? "__procedure_question" "scm_procedure_question")
 
     (+ "__add" "scm_add")
     (- "__sub" "scm_sub")

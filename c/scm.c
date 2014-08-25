@@ -260,11 +260,6 @@ scm *scm_boolean(scm* env, scm* b, scm* thn, scm* els) {
   }
   return scm_invoke_closure1(thn);
 }
-scm *scm_null_question(scm* env, scm* n) {
-  if(n->t == scm_type_null)
-    return scmalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
-  return scmalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
-}
 
 scm* scm_eq_question(scm* env, scm* a, scm* b) {
   if(a->t != b->t) return scmalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
@@ -273,5 +268,46 @@ scm* scm_eq_question(scm* env, scm* a, scm* b) {
      !strcmp(a->v.s,b->v.s))
     return scmalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
   
+  return scmalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
+}
+
+scm *scm_number_question(scm* env, scm* obj) {
+  if(obj->t == scm_type_number)
+    return scmalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
+  return scmalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
+}
+scm *scm_boolean_question(scm* env, scm* obj) {
+  if(obj->t == scm_type_boolean)
+    return scmalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
+  return scmalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
+}
+scm *scm_string_question(scm* env, scm* obj) {
+  if(obj->t == scm_type_string)
+    return scmalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
+  return scmalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
+}
+scm *scm_symbol_question(scm* env, scm* obj) {
+  if(obj->t == scm_type_symbol)
+    return scmalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
+  return scmalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
+}
+scm *scm_vector_question(scm* env, scm* obj) {
+  if(obj->t == scm_type_vector)
+    return scmalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
+  return scmalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
+}
+scm *scm_null_question(scm* env, scm* obj) {
+  if(obj->t == scm_type_null)
+    return scmalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
+  return scmalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
+}
+scm *scm_pair_question(scm* env, scm* obj) {
+  if(obj->t == scm_type_pair)
+    return scmalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
+  return scmalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
+}
+scm *scm_procedure_question(scm* env, scm* obj) {
+  if(obj->t == scm_type_fptr)
+    return scmalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
   return scmalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
 }

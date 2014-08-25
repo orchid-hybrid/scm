@@ -57,7 +57,7 @@ scm* scm_invoke_closure3(scm* clos, scm* p1, scm* p2);
 scm* scm_invoke_closure4(scm* clos, scm* p1, scm* p2, scm* p3);
 scm* scm_invoke_closure5(scm* clos, scm* p1, scm* p2, scm* p3, scm* p4);
 
-// PRIMITIVES
+/* PRIMITIVES */
 
 scm* scm_wrap_prim(scm_fptr prim);
 
@@ -78,5 +78,13 @@ scm* scm_num_eq(scm* env, scm* a, scm* b);
 scm* scm_num_to_string(scm* env, scm* n);
 
 scm* scm_boolean(scm* env, scm* b, scm* thn, scm* els);
-scm* scm_null_question(scm* env, scm* n);
 scm* scm_eq_question(scm* env, scm* a, scm* b);
+
+scm* scm_number_question(scm* env, scm* obj);
+scm* scm_boolean_question(scm* env, scm* obj);
+scm* scm_string_question(scm* env, scm* obj);
+scm* scm_symbol_question(scm* env, scm* obj);
+scm* scm_vector_question(scm* env, scm* obj);
+scm* scm_null_question(scm* env, scm* obj);
+scm* scm_pair_question(scm* env, scm* obj);
+scm* scm_procedure_question(scm* env, scm* obj);
