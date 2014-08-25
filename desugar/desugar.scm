@@ -26,15 +26,17 @@
 (define (term-var? exp) (symbol? exp))
 (define (term-lambda? exp)
   (and (list? exp)
-       (= 3 (length exp))
+       (>= (length exp) 3)
        (equal? 'lambda (car exp))
-       (list? (cadr exp))))
+       (or (null? (cadr exp)) ;; allow empty parameter lists
+           (list? (cadr exp)))))
 
 (define (term-app? exp)
   (and (list? exp)
        (not (null? exp))
        (or (term-lambda? (car exp))
-           (term-var? (car exp)))))
+           (term-var? (car exp))
+           (list? (car exp)))))
 
 ;; (let ((a b)) c)
 (define (term-let? exp)
@@ -107,14 +109,14 @@
 (define (desugar exp)
   (cond
    ((term-set!? exp) `(set! ,(cadr exp) ,(desugar (caddr exp))))
-
+ 
    ((term-begin? exp)
     (cond ((null? (cdr exp)) (error "empty begin form"))
           ((null? (cddr exp)) (desugar (cadr exp)))
           (else `((lambda ()
                     ,(desugar (cons 'begin (cddr exp))))
                   ,(desugar (cadr exp))))))
-
+   
    ((term-lambda? exp)
     (let ((params (cadr exp))
           (body (cddr exp)))
@@ -167,7 +169,7 @@
      ((> (length exp) 2)
       (desugar `(if ,(caadr exp)
                     ,(cadadr exp)
-                    (cond . ,(cddr exp)))))))
+                    `(cond . ,(cddr exp)))))))
    
    ((term-and? exp)
     (if (null? (cdr exp))

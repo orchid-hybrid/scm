@@ -12,13 +12,12 @@
        (= (length e) 2)
        (equal? 'quote (car e))))
 
-(define (term-lambda? e)
-  (and (list? e)
-       (>= (length e) 3)
-       (equal? (car e) 'lambda)
-       (list? (cadr e))
-       ;; all symbols cadr
-       ))
+(define (term-lambda? exp)
+  (and (list? exp)
+       (>= (length exp) 3)
+       (equal? 'lambda (car exp))
+       (or (null? (cadr exp)) ;; allow empty parameter lists
+           (list? (cadr exp)))))
 
 (define (term-set!? e)
   (and (list? e)
