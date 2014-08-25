@@ -7,6 +7,7 @@
                  ((equal? char #\=) (list #\_ #\n #\u #\m #\e #\q))
                  ((equal? char #\<) (list #\_ #\l #\t))
                  ((equal? char #\>) (list #\_ #\g #\t))
+                 ((equal? char #\*) (list #\_ #\s #\t #\a #\r))
                  (else (list char))))))
     (let ((mangled (map down (string->list (symbol->string s)))))
       (list->string (apply append mangled)))))

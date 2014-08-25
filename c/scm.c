@@ -114,7 +114,7 @@ scm* scm_newline(scm* env) {
 }
 
 scm* scm_put_string(scm* env, scm *s) {
-  printf(s->v.s);
+  printf("%s", s->v.s);
   return NULL;
 }
 
