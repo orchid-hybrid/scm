@@ -70,7 +70,7 @@
     (vector? "__vector_question" "scm_vector_question")
     (null? "__null_question" "scm_null_question")
     (pair? "__pair_question" "scm_pair_question")
-    (fptr? "__procedure_question" "scm_procedure_question")
+    (procedure? "__procedure_question" "scm_procedure_question")
 
     (+ "__add" "scm_add")
     (- "__sub" "scm_sub")
