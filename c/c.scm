@@ -113,7 +113,9 @@
    (primitives)))
 
 (define (self-evaluating-form? form)
-  (null? form))
+  (or (null? form)
+      (number? form)
+      (boolean? form)))
 
 (define (emit-c term)
   (cond ((prim? term)
@@ -146,7 +148,7 @@
                  (emit-c (cadr term))
                  (begin (display term)
                         (newline)
-                        (error "Dont know how to quote that")))))
+                        (error (list "Dont know how to quote that: " term))))))
         ((and (list? term)
               (not (null? term)))
          (emit-call (car term) (cdr term)))

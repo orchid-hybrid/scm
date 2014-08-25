@@ -36,16 +36,7 @@ scm* scm_string(char *s);
 
 scm* scm_vector_ref(scm* vec, int i);
 
-scm* scm_vector0();
-scm* scm_vector1(scm *v0);
-scm* scm_vector2(scm *v0, scm *v1);
-scm* scm_vector3(scm *v0, scm *v1, scm *v2);
-scm* scm_vector4(scm *v0, scm *v1, scm *v2, scm *v3);
-scm* scm_vector5(scm *v0, scm *v1, scm *v2, scm *v3, scm *v4);
-scm* scm_vector6(scm *v0, scm *v1, scm *v2, scm *v3, scm *v4, scm *v5);
-scm* scm_vector7(scm *v0, scm *v1, scm *v2, scm *v3, scm *v4, scm *v5, scm *v6);
-scm* scm_vector8(scm *v0, scm *v1, scm *v2, scm *v3, scm *v4, scm *v5, scm *v6, scm *v7);
-scm* scm_vector9(scm *v0, scm *v1, scm *v2, scm *v3, scm *v4, scm *v5, scm *v6, scm *v7, scm *v8);
+#include "scm_vector.h"
 
 scm* scm_make_pair(scm* car, scm* cdr);
 scm* scm_make_symbol(char *s);
@@ -83,6 +74,7 @@ scm* scm_num_to_string(scm* env, scm* n);
 
 scm* scm_boolean(scm* env, scm* b, scm* thn, scm* els);
 scm* scm_eq_question(scm* env, scm* a, scm* b);
+scm* scm_string_equal_question(scm* env, scm* a, scm* b);
 
 scm* scm_number_question(scm* env, scm* obj);
 scm* scm_boolean_question(scm* env, scm* obj);
