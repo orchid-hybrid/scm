@@ -111,7 +111,7 @@
    ((term-begin? exp)
     (cond ((null? (cdr exp)) (error "empty begin form"))
           ((null? (cddr exp)) (desugar (cadr exp)))
-          (else `((lambda () ,(desugar (cons 'begin (cddr exp)))) (desugar (cadr exp))))))
+          (else `((lambda () ,(desugar (cons 'begin (cddr exp)))) ,(desugar (cadr exp))))))
 
    ((term-lambda? exp)
     (let ((params (cadr exp))
