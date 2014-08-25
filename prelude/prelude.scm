@@ -15,6 +15,16 @@
       0
       (+ 1 (length (cdr lst)))))
 
+(define (list? lst)
+  (or (null? lst)
+      (and (pair? lst)
+           (list? (cdr lst)))))
+
+(define (append l m)
+  (if (null? l)
+      m
+      (cons (car l) (append (cdr l) m))))
+
 (define (map fn lst)
   (if (null? lst)
       '()
