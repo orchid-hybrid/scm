@@ -189,7 +189,13 @@
      (error "unquote"))
     
     ((term-var? exp) exp)
-    ((term-app? exp) (map desugar exp))
+    ((term-app? exp)
+     (if (equal? (car exp) 'list)
+         (fold (lambda (x ys)
+                 (list 'cons (desugar x) ys))
+               ''()
+               (cdr exp))
+         (map desugar exp)))
     (else exp)))
 
 (define (quote-desugar term)

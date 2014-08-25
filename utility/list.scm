@@ -12,6 +12,12 @@
           #t
           (any p (cdr l)))))
 
+(define (fold kons knil klist)
+  (if (null? klist)
+      knil
+      (kons (car klist)
+            (fold kons knil (cdr klist)))))
+
 (define (list-index* i elt list)
   (if (null? list)
       #f
