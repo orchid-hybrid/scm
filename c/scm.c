@@ -8,6 +8,11 @@ scm *scmalloc(scm s) {
   return sp;
 }
 
+scm* scm_char(char *s) {
+  assert((unsigned)strlen(s) == 1);
+  return scmalloc((scm){ .t = scm_type_char, .v.s = s });
+}
+
 scm* scm_string(char *s) {
   return scmalloc((scm){ .t = scm_type_string, .v.s = s });
 }
@@ -94,15 +99,48 @@ scm* scm_print(scm* env, scm *s) {
   return NULL;
 }
 
+scm* scm_newline(scm* env) {
+  puts("");
+  return NULL;
+}
+
 scm* scm_put_string(scm* env, scm *s) {
   printf(s->v.s);
   return NULL;
 }
 
-scm* scm_newline(scm* env) {
-  puts("");
-  return NULL;
+
+scm* scm_string_to_char(scm *env, scm *s) {
+  assert(s->t == scm_type_string);
+  return scm_char(s->v.s);
 }
+
+scm* scm_string_to_number(scm *env, scm *s) {
+  assert(s->t == scm_type_string);
+  return scmalloc((scm){ .t = scm_type_number, .v.n = atoi(s->v.s) });
+}
+
+scm* scm_string_to_symbol(scm *env, scm *s) {
+  assert(s->t == scm_type_string);
+  return scm_make_symbol(s->v.s);
+}
+
+scm* scm_string_append(scm* env, scm *a, scm *b) {
+  assert((a->t == scm_type_string && b->t == scm_type_string)
+         || (a->t == scm_type_char && b->t == scm_type_char));
+  char* s1 = a->v.s;
+  char* s2 = b->v.s;
+  char* new = malloc(strlen(s1)+strlen(s2)+1);
+  new[0] = '\0';
+  strcat(new,s1);
+  strcat(new,s2);
+  return scm_string(new);
+}
+
+scm* scm_string_length(scm* env, scm* s) {
+  return scmalloc((scm){ .t = scm_type_number, .v.n = strlen(s->v.s) });
+}
+
 
 scm* scm_cons(scm* env, scm *car, scm *cdr) {
   return scm_make_pair(car,cdr);
@@ -179,7 +217,7 @@ scm *scm_num_gte(scm* env, scm* a, scm* b) {
   return scmalloc((scm){ .t = scm_type_boolean, .v.n = eqp });  
 }
 
-scm *scm_num_to_string(scm* env, scm* n) {
+scm *scm_number_to_string(scm* env, scm* n) {
   assert(n->t == scm_type_number);
   char* buff = malloc(sizeof(char) * 30);
   sprintf(buff, "%i", n->v.n);
@@ -213,6 +251,11 @@ scm *scm_number_question(scm* env, scm* obj) {
 }
 scm *scm_boolean_question(scm* env, scm* obj) {
   if(obj->t == scm_type_boolean)
+    return scmalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
+  return scmalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
+}
+scm *scm_char_question(scm* env, scm* obj) {
+  if(obj->t == scm_type_char)
     return scmalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
   return scmalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
 }

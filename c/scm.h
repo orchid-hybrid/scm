@@ -1,10 +1,12 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 enum scm_type {
   scm_type_number,
   scm_type_boolean,
   scm_type_string,
+  scm_type_char,
   scm_type_symbol,
   scm_type_vector,
   scm_type_null,
@@ -32,6 +34,7 @@ struct scm {
 
 scm *scmalloc(scm s);
 
+scm* scm_char(char *s);
 scm* scm_string(char *s);
 
 scm* scm_vector_ref(scm* vec, int i);
@@ -53,8 +56,14 @@ scm* scm_invoke_closure5(scm* clos, scm* p1, scm* p2, scm* p3, scm* p4);
 scm* scm_wrap_prim(scm_fptr prim);
 
 scm* scm_print(scm* env, scm* s);
-scm* scm_put_string(scm* env, scm *s);
 scm* scm_newline(scm* env);
+scm* scm_put_string(scm* env, scm *s);
+scm* scm_string_append(scm* env, scm *a, scm *b);
+scm* scm_string_length(scm* env, scm* s);
+
+scm* scm_string_to_char(scm *env, scm *s);
+scm* scm_string_to_symbol(scm *env, scm *s);
+scm* scm_string_to_number(scm *env, scm *s);
 
 scm* scm_cons(scm* env, scm* car, scm* cdr);
 scm* scm_car(scm* env, scm* pair);
@@ -71,7 +80,7 @@ scm* scm_num_lt(scm* env, scm* a, scm* b);
 scm* scm_num_lte(scm* env, scm* a, scm* b);
 scm* scm_num_gt(scm* env, scm* a, scm* b);
 scm* scm_num_gte(scm* env, scm* a, scm* b);
-scm* scm_num_to_string(scm* env, scm* n);
+scm* scm_number_to_string(scm* env, scm* n);
 
 scm* scm_boolean(scm* env, scm* b, scm* thn, scm* els);
 scm* scm_eq_question(scm* env, scm* a, scm* b);
@@ -79,6 +88,7 @@ scm* scm_string_equal_question(scm* env, scm* a, scm* b);
 
 scm* scm_number_question(scm* env, scm* obj);
 scm* scm_boolean_question(scm* env, scm* obj);
+scm* scm_char_question(scm* env, scm* obj);
 scm* scm_string_question(scm* env, scm* obj);
 scm* scm_symbol_question(scm* env, scm* obj);
 scm* scm_vector_question(scm* env, scm* obj);

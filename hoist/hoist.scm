@@ -3,6 +3,8 @@
 (define (hoist collect)
   (traverse (lambda (s)
               s)
+            (lambda (c)
+              c)
             (lambda (n)
               n)
             (lambda (b)

@@ -52,8 +52,13 @@
 
 (define (primitives)
   '((print "__print" "scm_print")
-    (put-string "__put_string" "scm_put_string")
     (newline "__newline" "scm_newline")
+    (put-string "__put_string" "scm_put_string")
+    (string-append "__string_append" "scm_string_append")
+
+    (string->char "__string_to_char" "scm_string_to_char")
+    (string->symbol "__string_to_symbol" "scm_string_to_symbol")
+    (string->number "__string_to_number" "scm_string_to_number")
     
     (cons "__cons" "scm_cons")
     (car "__car" "scm_car")
@@ -81,7 +86,7 @@
     (<= "__num_lte" "scm_num_lte")
     (>  "__num_gt"  "scm_num_gt")
     (>= "__num_gte" "scm_num_gte")
-    (number->string "__num_to_string" "scm_num_to_string")
+    (number->string "__number_to_string" "scm_number_to_string")
     ))
 
 (define (prim? exp)
@@ -134,6 +139,11 @@
          (display "scm_string")
          (display "(")
          (display (string-quote term))
+         (display ")"))
+         ((char? term)
+         (display "scm_char")
+         (display "(")
+         (display (string-quote (string term)))
          (display ")"))
         ((symbol? term)
          (display (mangle term)))

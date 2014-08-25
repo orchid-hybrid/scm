@@ -1,0 +1,6 @@
+(define (moo)
+  (print (string-append #\c #\a))
+  (print (string-append "a" "c"))
+  (let* ((num-strings (map string->number (cons "1" (cons "2" (cons "3" '())))))
+         (string-nums (map number->string num-strings)))
+    (for-each print string-nums)))

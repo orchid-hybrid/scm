@@ -5,6 +5,8 @@
   ;; lambda* by adding the list of free variables
   (traverse (lambda (s)
               (cons s '()))
+            (lambda (c)
+              (cons c '()))
             (lambda (n)
               (cons n '()))
             (lambda (b)
@@ -29,6 +31,8 @@
   ;; variables by making then into environments
   (traverse* (lambda (s)
                s)
+             (lambda (c)
+               c)
              (lambda (n)
                n)
              (lambda (b)
