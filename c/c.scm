@@ -64,6 +64,13 @@
     (boolean "__boolean" "scm_boolean")
     (null? "__null_question" "scm_null_question")
     (eq? "__eq_question" "scm_eq_question")
+
+    (+ "__add" "scm_add")
+    (- "__sub" "scm_sub")
+    (* "__mul" "scm_mul")
+    (/ "__div" "scm_div")
+    (= "__num_eq" "scm_num_eq")
+    (number->string "__num_to_string" "scm_num_to_string")
     ))
 
 (define (prim? exp)
@@ -129,7 +136,7 @@
                  (emit-c (cadr term))
                  (begin (display term)
                         (newline)
-                        (error "Dont kno w how to quote that")))))
+                        (error "Dont know how to quote that")))))
         ((and (list? term)
               (not (null? term)))
          (emit-call (car term) (cdr term)))

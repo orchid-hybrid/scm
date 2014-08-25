@@ -70,10 +70,12 @@ scm* scm_cdr(scm* env, scm* pair);
 scm* scm_set_car(scm* env, scm* pair, scm *newcar);
 scm* scm_set_cdr(scm* env, scm* pair, scm *newcdr);
 
-scm* scm_add(scm* env, scm* s);
-scm* scm_mul(scm* env, scm* s);
-scm* scm_sub(scm* env, scm* s);
-scm* scm_num_eq(scm* env, scm* s);
+scm* scm_add(scm* env, scm* a, scm* b);
+scm* scm_mul(scm* env, scm* a, scm* b);
+scm* scm_sub(scm* env, scm* a, scm* b);
+scm* scm_div(scm* env, scm* a, scm* b);
+scm* scm_num_eq(scm* env, scm* a, scm* b);
+scm* scm_num_to_string(scm* env, scm* n);
 
 scm* scm_boolean(scm* env, scm* b, scm* thn, scm* els);
 scm* scm_null_question(scm* env, scm* n);

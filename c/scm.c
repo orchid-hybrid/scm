@@ -215,17 +215,40 @@ scm* scm_set_cdr(scm* env, scm* pair, scm *newcdr) {
   return NULL;
 }
 
-scm* scm_add(scm* env, scm* s) {
- 
+scm* scm_add(scm* env, scm* a, scm* b) {
+  assert(a->t == scm_type_number && b->t == scm_type_number);
+  int sum = a->v.n + b->v.n;
+  return scmalloc((scm){ .t = scm_type_number, .v.n = sum });
 }
-scm* scm_mul(scm* env, scm* s) {
-  
+scm* scm_mul(scm* env, scm* a, scm* b) {
+  assert(a->t == scm_type_number && b->t == scm_type_number);
+  int prod = a->v.n * b->v.n;
+  return scmalloc((scm){ .t = scm_type_number, .v.n = prod });
 }
-scm *scm_sub(scm* env, scm* s) {
-  
+
+scm* scm_div(scm* env, scm* a, scm* b) {
+  assert(a->t == scm_type_number && b->t == scm_type_number);
+  int quot = a->v.n / b->v.n;
+  return scmalloc((scm){ .t = scm_type_number, .v.n = quot });
 }
-scm *scm_num_eq(scm* env, scm* s) {
-  
+
+scm *scm_sub(scm* env, scm* a, scm* b) {
+  assert(a->t == scm_type_number && b->t == scm_type_number);
+  int diff = a->v.n - b->v.n;
+  return scmalloc((scm){ .t = scm_type_number, .v.n = diff });  
+}
+
+scm *scm_num_eq(scm* env, scm* a, scm* b) {
+  assert(a->t == scm_type_number && b->t == scm_type_number);
+  int eqp = a->v.n == b->v.n;
+  return scmalloc((scm){ .t = scm_type_number, .v.n = eqp });  
+}
+
+scm *scm_num_to_string(scm* env, scm* n) {
+  assert(n->t == scm_type_number);
+  char* buff = malloc(sizeof(char) * 30);
+  sprintf(buff, "%i", n->v.n);
+  return scm_string(buff);
 }
 
 
