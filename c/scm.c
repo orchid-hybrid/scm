@@ -110,6 +110,11 @@ scm* scm_put_string(scm* env, scm *s) {
 }
 
 
+scm* scm_char_to_string(scm *env, scm *s) {
+  assert(s->t == scm_type_char);
+  return scm_string(s->v.s);
+}
+
 scm* scm_string_to_char(scm *env, scm *s) {
   assert(s->t == scm_type_string);
   return scm_char(s->v.s);

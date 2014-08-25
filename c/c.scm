@@ -21,6 +21,9 @@
            (string-append "scm_" m))
           (else m))))
 
+(define (char->string c)
+  (string c))
+
 (define (string-quote s)
   (string-append "\"" (string-append s "\"")))
 
@@ -56,6 +59,7 @@
     (put-string "__put_string" "scm_put_string")
     (string-append "__string_append" "scm_string_append")
 
+    (char->string "__char_to_string" "scm_char_to_string")
     (string->char "__string_to_char" "scm_string_to_char")
     (string->symbol "__string_to_symbol" "scm_string_to_symbol")
     (string->number "__string_to_number" "scm_string_to_number")
@@ -143,7 +147,7 @@
          ((char? term)
          (display "scm_char")
          (display "(")
-         (display (string-quote (string term)))
+         (display (string-quote (char->string term)))
          (display ")"))
         ((symbol? term)
          (display (mangle term)))
