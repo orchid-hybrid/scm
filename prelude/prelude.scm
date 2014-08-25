@@ -14,6 +14,28 @@
               (equal? (cdr p) (cdr q))))
         (#t #f)))
 
+(define (tostring obj)
+  (cond
+   ((string? obj) obj)
+   ((char? obj) (char->string obj))
+   ((boolean? obj) (if obj "#t" "#f"))
+   ((procedure? obj) "#<procedure>")
+   ((number? obj) (number->string obj))
+   ((symbol? obj) (symbol->string obj))
+   ((null? obj) "()")
+   ((list? obj) (foldl string-append "(" (append (map tostring obj) (cons ")" '()))))
+   ((pair? obj) (foldl string-append "(" (cons (tostring (car obj))
+                                               (cons " . "
+                                                     (cons (tostring (cdr obj))
+                                                           (cons ")" '()))))))))
+
+(define (display obj)
+  (put-string (tostring obj)))
+
+(define (print obj)
+  (display obj)
+  (newline))
+
 (define (not b)
   (if b #f #t))
 
@@ -25,6 +47,10 @@
 
 (define (cell-value cell)
   (cdr cell))
+
+
+(define (list->string lst)
+  (foldr (lambda (c m) (string-append (char->string c) m)) "" lst))
 
 (define (length lst)
   (if (null? lst)
@@ -40,6 +66,16 @@
   (if (null? l)
       m
       (cons (car l) (append (cdr l) m))))
+
+(define (foldl fn init lst)
+  (if (null? lst)
+      init
+      (foldl fn (fn init (car lst)) (cdr lst))))
+
+(define (foldr fn init lst)
+  (if (null? lst)
+      init
+      (fn (car lst) (foldr fn init (cdr lst)))))
 
 (define (map fn lst)
   (if (null? lst)

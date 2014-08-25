@@ -101,7 +101,7 @@
         (string->char (lambda (s) (string-ref s 0))))
      (if (= (length code) 1)
          (car code)
-         (case (foldr string "" code)
+         (case (foldl string "" code)
            (("space")  #\space)
            (("newline")  #\newline)))))
 
