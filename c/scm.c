@@ -94,6 +94,11 @@ scm* scm_print(scm* env, scm *s) {
   return NULL;
 }
 
+scm* scm_put_string(scm* env, scm *s) {
+  printf(s->v.s);
+  return NULL;
+}
+
 scm* scm_newline(scm* env) {
   puts("");
   return NULL;

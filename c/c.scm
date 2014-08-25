@@ -52,6 +52,7 @@
 
 (define (primitives)
   '((print "__print" "scm_print")
+    (put-string "__put_string" "scm_put_string")
     (newline "__newline" "scm_newline")
     
     (cons "__cons" "scm_cons")

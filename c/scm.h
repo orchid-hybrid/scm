@@ -53,6 +53,7 @@ scm* scm_invoke_closure5(scm* clos, scm* p1, scm* p2, scm* p3, scm* p4);
 scm* scm_wrap_prim(scm_fptr prim);
 
 scm* scm_print(scm* env, scm* s);
+scm* scm_put_string(scm* env, scm *s);
 scm* scm_newline(scm* env);
 
 scm* scm_cons(scm* env, scm* car, scm* cdr);
