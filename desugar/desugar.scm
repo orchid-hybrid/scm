@@ -76,12 +76,12 @@
 
 (define (term-and? exp)
   (and (list? exp)
-       (= (length exp) 3)
+       (>= (length exp) 1)
        (equal? 'and (car exp))))
 
 (define (term-or? exp)
   (and (list? exp)
-       (= (length exp) 3)
+       (>= (length exp) 1)
        (equal? 'or (car exp))))
 
 (define (term-quote? exp)
@@ -168,14 +168,14 @@
 	   ,(desugar `(cond . ,(cddr exp)))))))
    
    ((term-and? exp)
-    (let ((v1 (cadr exp))
-	  (v2 (caddr exp)))
-      (desugar `(if ,v1 ,v2 #f))))
+    (if (null? (cdr exp))
+        #t
+        (desugar `(if ,(cadr exp) ,(cons 'and (cddr exp)) #f))))
    
-   ((term-or? exp)
-    (let ((v1 (cadr exp))
-	  (v2 (caddr exp)))
-      (desugar `(if ,v1 #t ,v2))))
+  ((term-or? exp)
+    (if (null? (cdr exp))
+        #f
+        (desugar `(if ,(cadr exp) #t ,(cons 'or (cddr exp))))))
    
     ((term-quote? exp)
      (quote-desugar (cadr exp)))
