@@ -169,7 +169,7 @@
      ((> (length exp) 2)
       (desugar `(if ,(caadr exp)
                     ,(cadadr exp)
-                    `(cond . ,(cddr exp)))))))
+                    (cond . ,(cddr exp)))))))
    
    ((term-and? exp)
     (if (null? (cdr exp))

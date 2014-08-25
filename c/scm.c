@@ -95,7 +95,16 @@ scm* scm_wrap_prim(scm_fptr prim) {
 }
 
 scm* scm_print(scm* env, scm *s) {
-  puts(s->v.s);
+  if(s->t == scm_type_string || s->t == scm_type_symbol) {
+    puts(s->v.s);
+  }
+  else if(s->t == scm_type_boolean) {
+    printf("#%c\n", s->v.n ? 't' : 'f');
+  }
+  else if(s->t == scm_type_number) {
+    printf("%d\n", s->v.n);
+  }
+  
   return NULL;
 }
 
