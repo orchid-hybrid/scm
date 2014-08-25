@@ -1,16 +1,15 @@
 (define (mangle s)
-  (define (hyphen-down char)
-    (if (equal? char #\-)
-        #\_
-        char))
-  (define (question-down char)
-    (if (equal? char #\?)
-        (list #\_ #\q #\u #\e #\s #\t #\i #\o #\n)
-        (if (equal? char #\!)
-            (list #\_ #\b #\a #\n #\g)
-            (list char))))
-  (list->string (apply append (map question-down
-       (map hyphen-down (string->list (symbol->string s)))))))
+  (let ((down (lambda (char)
+                (cond 
+                 ((equal? char #\-) (list #\_))
+                 ((equal? char #\?) (list #\_ #\q #\u #\e #\s #\t #\i #\o #\n))
+                 ((equal? char #\!) (list #\_ #\b #\a #\n #\g))
+                 ((equal? char #\=) (list #\_ #\n #\u #\m #\e #\q))
+                 ((equal? char #\<) (list #\_ #\l #\t))
+                 ((equal? char #\>) (list #\_ #\g #\t))
+                 (else (list char))))))
+    (let ((mangled (map down (string->list (symbol->string s)))))
+      (list->string (apply append mangled)))))
 
 (define (mangle* s n)
   (let ((m (mangle s)))
@@ -77,6 +76,10 @@
     (* "__mul" "scm_mul")
     (/ "__div" "scm_div")
     (= "__num_eq" "scm_num_eq")
+    (<  "__num_lt"  "scm_num_lt")
+    (<= "__num_lte" "scm_num_lte")
+    (>  "__num_gt"  "scm_num_gt")
+    (>= "__num_gte" "scm_num_gte")
     (number->string "__num_to_string" "scm_num_to_string")
     ))
 

@@ -75,6 +75,10 @@ scm* scm_mul(scm* env, scm* a, scm* b);
 scm* scm_sub(scm* env, scm* a, scm* b);
 scm* scm_div(scm* env, scm* a, scm* b);
 scm* scm_num_eq(scm* env, scm* a, scm* b);
+scm* scm_num_lt(scm* env, scm* a, scm* b);
+scm* scm_num_lte(scm* env, scm* a, scm* b);
+scm* scm_num_gt(scm* env, scm* a, scm* b);
+scm* scm_num_gte(scm* env, scm* a, scm* b);
 scm* scm_num_to_string(scm* env, scm* n);
 
 scm* scm_boolean(scm* env, scm* b, scm* thn, scm* els);

@@ -241,7 +241,31 @@ scm *scm_sub(scm* env, scm* a, scm* b) {
 scm *scm_num_eq(scm* env, scm* a, scm* b) {
   assert(a->t == scm_type_number && b->t == scm_type_number);
   int eqp = a->v.n == b->v.n;
-  return scmalloc((scm){ .t = scm_type_number, .v.n = eqp });  
+  return scmalloc((scm){ .t = scm_type_boolean, .v.n = eqp });  
+}
+
+scm *scm_num_lt(scm* env, scm* a, scm* b) {
+  assert(a->t == scm_type_number && b->t == scm_type_number);
+  int eqp = a->v.n < b->v.n;
+  return scmalloc((scm){ .t = scm_type_boolean, .v.n = eqp });  
+}
+
+scm *scm_num_lte(scm* env, scm* a, scm* b) {
+  assert(a->t == scm_type_number && b->t == scm_type_number);
+  int eqp = a->v.n <= b->v.n;
+  return scmalloc((scm){ .t = scm_type_boolean, .v.n = eqp });  
+}
+
+scm *scm_num_gt(scm* env, scm* a, scm* b) {
+  assert(a->t == scm_type_number && b->t == scm_type_number);
+  int eqp = a->v.n > b->v.n;
+  return scmalloc((scm){ .t = scm_type_boolean, .v.n = eqp });  
+}
+
+scm *scm_num_gte(scm* env, scm* a, scm* b) {
+  assert(a->t == scm_type_number && b->t == scm_type_number);
+  int eqp = a->v.n >= b->v.n;
+  return scmalloc((scm){ .t = scm_type_boolean, .v.n = eqp });  
 }
 
 scm *scm_num_to_string(scm* env, scm* n) {
