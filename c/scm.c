@@ -331,7 +331,8 @@ scm *scm_pair_question(scm* env, scm* obj) {
   return scmalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
 }
 scm *scm_procedure_question(scm* env, scm* obj) {
-  if(obj->t == scm_type_fptr)
+  if(obj->t == scm_type_pair &&
+     obj->v.cons.car->t == scm_type_fptr)
     return scmalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
   return scmalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
 }
