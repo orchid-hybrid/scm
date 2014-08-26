@@ -1,3 +1,7 @@
+;; bootstrap shim
+(define (char->string c)
+  (string c))
+
 (define (mangle s)
   (let ((down (lambda (char)
                 (cond 
@@ -10,7 +14,7 @@
                  ((equal? char #\*) (list #\_ #\s #\t #\a #\r))
                  (else (list char))))))
     (let ((mangled (map down (string->list (symbol->string s)))))
-      (list->string (apply append mangled)))))
+      (list->string (foldl append '() mangled)))))
 
 (define (mangle* s n)
   (let ((m (mangle s)))
@@ -21,9 +25,6 @@
                (equal? s 'vector-ref))
            (string-append "scm_" m))
           (else m))))
-
-(define (char->string c)
-  (string c))
 
 (define (string-quote s)
   (string-append "\"" (string-append s "\"")))
@@ -60,7 +61,10 @@
     (put-string "__put_string" "scm_put_string")
     (string-append "__string_append" "scm_string_append")
 
+    (number->string "__number_to_string" "scm_number_to_string")
     (char->string "__char_to_string" "scm_char_to_string")
+    (symbol->string "__symbol_to_string" "scm_symbol_to_string")
+
     (string->char "__string_to_char" "scm_string_to_char")
     (string->symbol "__string_to_symbol" "scm_string_to_symbol")
     (string->number "__string_to_number" "scm_string_to_number")
@@ -75,6 +79,7 @@
     (eq? "__eq_question" "scm_eq_question")
     (number? "__number_question" "scm_number_question")
     (boolean? "__boolean_question" "scm_boolean_question")
+    (char? "__char_question" "scm_char_question")
     (string? "__string_question" "scm_string_question")
     (symbol? "__symbol_question" "scm_symbol_question")
     (vector? "__vector_question" "scm_vector_question")
@@ -91,7 +96,6 @@
     (<= "__num_lte" "scm_num_lte")
     (>  "__num_gt"  "scm_num_gt")
     (>= "__num_gte" "scm_num_gte")
-    (number->string "__number_to_string" "scm_number_to_string")
     ))
 
 (define (prim? exp)
