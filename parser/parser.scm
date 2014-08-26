@@ -55,32 +55,37 @@
         ((equal? char #\#) 'hash)
         (else 'unknown)))
 
+(define (read-symbol-aux input-stream sym create-symbol)
+  (if (symbolic? (peek-char input-stream))
+      (begin
+        (sym (read-char input-stream))
+        (read-symbol-aux input-stream sym create-symbol))
+      (create-symbol (sym))))
+
 (define (read-symbol input-stream)
   (let ((create-symbol (lambda (chars)
                          (if (all char-numeric? chars)
                              (string->number (list->string chars))
                              (string->symbol (list->string chars))))))
-    (let loop ((sym (collector)))
-      (if (symbolic? (peek-char input-stream))
-          (begin
-            (sym (read-char input-stream))
-            (loop sym))
-          (create-symbol (sym))))))
+    (read-symbol-aux input-stream (collector) create-symbol)))
 
-(define (read-string input-stream)
-  (read-char input-stream) ;; we assume this is #\"
-  (let loop ((str (collector)))
+
+(define (read-string-aux input-stream str)
     (let ((char (read-char input-stream)))
       (cond ((eof-object? char)
              (error "reading terminated before string ended"))
             ((equal? #\\ char)
              (str (read-char input-stream))
-             (loop str))
+             (read-string-aux input-stream str))
             ((equal? #\" char)
              (list->string (str)))
             (else
              (str char)
-             (loop str))))))
+             (read-string-aux input-stream str)))))
+
+(define (read-string input-stream)
+  (read-char input-stream) ;; we assume this is #\"
+  (read-string-aux input-stream (collector)))
 
 (define (read-until-end-of-line input-stream)
   (if (equal? #\newline (read-char input-stream))
