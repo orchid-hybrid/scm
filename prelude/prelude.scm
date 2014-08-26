@@ -116,3 +116,27 @@
 (define (cddadr x) (cdr (cdr (car (cdr x)))))
 (define (cdddar x) (cdr (cdr (cdr (car x)))))
 (define (cddddr x) (cdr (cdr (cdr (cdr x)))))
+
+(define y-combinator-1
+  (lambda (f)
+    ((lambda (x) (x x))
+     (lambda (g)
+       (f (lambda (arg) ((g g) arg)))))))
+
+(define y-combinator-2
+  (lambda (f)
+    ((lambda (x) (x x))
+     (lambda (g)
+       (f (lambda (arg1 arg2) ((g g) arg1 arg2)))))))
+
+(define y-combinator-3
+  (lambda (f)
+    ((lambda (x) (x x))
+     (lambda (g)
+       (f (lambda (arg1 arg2 arg3) ((g g) arg1 arg2 arg3)))))))
+
+(define y-combinator-4
+  (lambda (f)
+    ((lambda (x) (x x))
+     (lambda (g)
+       (f (lambda (arg1 arg2 arg3 arg4) ((g g) arg1 arg2 arg3 arg4)))))))

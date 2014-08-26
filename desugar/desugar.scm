@@ -51,6 +51,13 @@
        (list? (cadr exp))
        (equal? 'let* (car exp))))
 
+(define (term-named-let? exp)
+  (and (list? exp)
+       (>= (length exp) 4)
+       (symbol? (cadr exp))
+       (list? (caddr exp))
+       (equal? 'let (car exp))))
+
 
 ;; (define a b)
 (define (term-define? exp)
@@ -122,6 +129,17 @@
           (body (cddr exp)))
       `(lambda ,params ,(desugar (cons 'begin body)))))
 
+   ((term-named-let? exp)
+    (let* ((name (cadr exp))
+           (bindings (caddr exp))
+	   (params (map car bindings))
+	   (values (map cadr bindings))
+           (args (length params))
+	   (body (cdddr exp))
+           (y (string->symbol (string-append "y-combinator-"
+                                             (number->string args)))))
+      (desugar `((,y (lambda (,name) (lambda ,params . ,body))) . ,values))))
+   
    ((term-let? exp)
     (let* ((bindings (cadr exp))
 	   (params (map car bindings))
