@@ -14,7 +14,6 @@ scm* scm_char(char *s) {
 }
 
 scm* scm_newchar(char *s) {
-  assert((unsigned)strlen(s) == 1);
   char *t = malloc(2);
   t[0]=s[0];
   t[1]=0;
@@ -176,7 +175,7 @@ scm* scm_put_string(scm* env, scm *s) {
 
 scm* scm_file_to_string(scm *env, scm *s) {
   assert(s->t == scm_type_string);
-  File* f;
+  FILE* f;
   char* buffer = 0;
   //int start = ftell(f);
 
@@ -239,8 +238,8 @@ scm* scm_string_length(scm* env, scm* s) {
 
 scm* scm_string_ref(scm *env, scm *i, scm *s) {
   assert(s->t == scm_type_string);
-  assert(i->t == scm_type_number);;
-  return scm_char(s->v.s[i->v.n]);
+  assert(i->t == scm_type_number);
+  return scm_newchar(s->v.s + i->v.n);
 }
 
 scm* scm_cons(scm* env, scm *car, scm *cdr) {
@@ -361,8 +360,13 @@ scm *scm_char_question(scm* env, scm* obj) {
   return scmalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
 }
 scm *scm_string_question(scm* env, scm* obj) {
-  if(obj->t == scm_type_string)
+  //printf("oee\n");
+  //printf("%p\n", obj);
+  if(obj->t == scm_type_string) {
+    //printf("ok1\n");
     return scmalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
+  }
+  //printf("ok2\n");
   return scmalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
 }
 scm *scm_symbol_question(scm* env, scm* obj) {
