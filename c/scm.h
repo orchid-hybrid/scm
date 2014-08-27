@@ -50,12 +50,18 @@ scm* scm_invoke_closure2(scm* clos, scm* p1);
 scm* scm_invoke_closure3(scm* clos, scm* p1, scm* p2);
 scm* scm_invoke_closure4(scm* clos, scm* p1, scm* p2, scm* p3);
 scm* scm_invoke_closure5(scm* clos, scm* p1, scm* p2, scm* p3, scm* p4);
+scm* scm_invoke_closure6(scm* clos, scm* p1, scm* p2, scm* p3, scm* p4, scm* p5);
+scm* scm_invoke_closure7(scm* clos, scm* p1, scm* p2, scm* p3, scm* p4, scm* p5, scm* p6);
+scm* scm_invoke_closure8(scm* clos, scm* p1, scm* p2, scm* p3, scm* p4, scm* p5, scm* p6, scm* p7);
+scm* scm_invoke_closure9(scm* clos, scm* p1, scm* p2, scm* p3, scm* p4, scm* p5, scm* p6, scm* p7, scm* p8);
+
 
 /* PRIMITIVES */
 
 scm* scm_wrap_prim(scm_fptr prim);
 
 scm* scm_print(scm* env, scm* s);
+scm* scm_error(scm* env, scm* s);
 scm* scm_newline(scm* env);
 scm* scm_put_string(scm* env, scm *s);
 scm* scm_string_append(scm* env, scm *a, scm *b);

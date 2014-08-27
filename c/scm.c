@@ -89,6 +89,47 @@ scm* scm_invoke_closure5(scm *clos, scm *p1, scm *p2, scm *p3, scm *p4) {
   return code(env,p1,p2,p3,p4);
 }
 
+scm* scm_invoke_closure6(scm *clos, scm *p1, scm *p2, scm *p3, scm *p4, scm *p5) {
+  if(clos->t != scm_type_pair) { puts("!PAIR"); exit(0); }
+  if(clos->v.cons.car->t != scm_type_fptr) { puts("!FPTR"); exit(0); }
+  if(clos->v.cons.cdr->t != scm_type_vector) { puts("!VECTOR"); exit(0); }
+  
+  scm_fptr code = clos->v.cons.car->v.f;
+  scm** env = clos->v.cons.cdr->v.v;
+  return code(env,p1,p2,p3,p4,p5);
+}
+
+scm* scm_invoke_closure7(scm *clos, scm *p1, scm *p2, scm *p3, scm *p4, scm *p5, scm *p6) {
+  if(clos->t != scm_type_pair) { puts("!PAIR"); exit(0); }
+  if(clos->v.cons.car->t != scm_type_fptr) { puts("!FPTR"); exit(0); }
+  if(clos->v.cons.cdr->t != scm_type_vector) { puts("!VECTOR"); exit(0); }
+  
+  scm_fptr code = clos->v.cons.car->v.f;
+  scm** env = clos->v.cons.cdr->v.v;
+  return code(env,p1,p2,p3,p4,p5,p6);
+}
+
+
+scm* scm_invoke_closure8(scm *clos, scm *p1, scm *p2, scm *p3, scm *p4, scm *p5, scm *p6, scm *p7) {
+  if(clos->t != scm_type_pair) { puts("!PAIR"); exit(0); }
+  if(clos->v.cons.car->t != scm_type_fptr) { puts("!FPTR"); exit(0); }
+  if(clos->v.cons.cdr->t != scm_type_vector) { puts("!VECTOR"); exit(0); }
+  
+  scm_fptr code = clos->v.cons.car->v.f;
+  scm** env = clos->v.cons.cdr->v.v;
+  return code(env,p1,p2,p3,p4,p5,p6,p7);
+}
+
+scm* scm_invoke_closure9(scm *clos, scm *p1, scm *p2, scm *p3, scm *p4, scm *p5, scm *p6, scm *p7, scm *p8) {
+  if(clos->t != scm_type_pair) { puts("!PAIR"); exit(0); }
+  if(clos->v.cons.car->t != scm_type_fptr) { puts("!FPTR"); exit(0); }
+  if(clos->v.cons.cdr->t != scm_type_vector) { puts("!VECTOR"); exit(0); }
+  
+  scm_fptr code = clos->v.cons.car->v.f;
+  scm** env = clos->v.cons.cdr->v.v;
+  return code(env,p1,p2,p3,p4,p5,p6,p7,p8);
+}
+
 
 scm* scm_wrap_prim(scm_fptr prim) {
   return scm_make_closure(prim, scm_vector0());
@@ -105,6 +146,12 @@ scm* scm_print(scm* env, scm *s) {
     printf("%d\n", s->v.n);
   }
   
+  return NULL;
+}
+
+scm* scm_error(scm* env, scm *s) {
+  puts(s->v.s);
+  exit(-1);
   return NULL;
 }
 

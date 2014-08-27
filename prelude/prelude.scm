@@ -14,6 +14,12 @@
               (equal? (cdr p) (cdr q))))
         (#t #f)))
 
+(define (member s l)
+  (if (null? l)
+      #f
+      (or (equal? s (car l))
+          (member s (cdr l)))))
+
 (define (tostring obj)
   (cond
    ((string? obj) obj)
@@ -23,7 +29,7 @@
    ((number? obj) (number->string obj))
    ((symbol? obj) (symbol->string obj))
    ((null? obj) "()")
-   ((list? obj) (foldl string-append "(" (append (map tostring obj) (cons ")" '()))))
+   ((list? obj) (foldl string-append "(" (append (map (lambda (s) (string-append (tostring s) " ")) obj) (cons ")" '()))))
    ((pair? obj) (foldl string-append "(" (cons (tostring (car obj))
                                                (cons " . "
                                                      (cons (tostring (cdr obj))
@@ -50,7 +56,7 @@
 
 
 (define (list->string lst)
-  (foldr (lambda (c m) (string-append (char->string c) m)) "" lst))
+  (foldr (lambda (c m) (string-append (char->string c) m)) "") lst)
 
 (define (length lst)
   (if (null? lst)
@@ -140,3 +146,15 @@
     ((lambda (x) (x x))
      (lambda (g)
        (f (lambda (arg1 arg2 arg3 arg4) ((g g) arg1 arg2 arg3 arg4)))))))
+
+(define y-combinator-5
+  (lambda (f)
+    ((lambda (x) (x x))
+     (lambda (g)
+       (f (lambda (arg1 arg2 arg3 arg4 arg5) ((g g) arg1 arg2 arg3 arg4 arg5)))))))
+
+(define y-combinator-6
+  (lambda (f)
+    ((lambda (x) (x x))
+     (lambda (g)
+       (f (lambda (arg1 arg2 arg3 arg4 arg5 arg6) ((g g) arg1 arg2 arg3 arg4 arg5 arg6)))))))
