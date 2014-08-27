@@ -26,8 +26,22 @@
            (string-append "scm_" m))
           (else m))))
 
+(define (concat-map f l)
+  (if (null? l)
+      '()
+      (append (f (car l))
+              (concat-map f (cdr l)))))
+
+(define (escape-string s)
+  (let ((escape-char (lambda (c)
+                       (if (or (eq? c #\")
+                               (eq? c #\\))
+                           (list #\\ c)
+                           (list c)))))
+    (list->string (concat-map escape-char (string->list s)))))
+
 (define (string-quote s)
-  (string-append "\"" (string-append s "\"")))
+  (string-append "\"" (string-append (escape-string s) "\"")))
 
 (define (emit-call f args)
   (cond ((and (equal? f 'vector-ref)
@@ -69,6 +83,7 @@
     (string->char "__string_to_char" "scm_string_to_char")
     (string->symbol "__string_to_symbol" "scm_string_to_symbol")
     (string->number "__string_to_number" "scm_string_to_number")
+    (string->list "__string_to_list" "scm_string_to_list")
     
     (cons "__cons" "scm_cons")
     (car "__car" "scm_car")
@@ -105,14 +120,16 @@
        (primitives)))
 
 (define (rename-prim p)
-  (cond
-   ((assoc p (primitives)) => cadr)
-   (else             (error "unhandled primitive: " p))))
+  (let ((a (assoc p (primitives))))
+    (if a
+        (cadr a)
+        (error "unhandled primitive: " p))))
 
 (define (rename-prim-code p)
-  (cond
-   ((assoc p (primitives)) => caddr)
-   (else             (error "unhandled primitive: " p))))
+  (let ((a (assoc p (primitives))))
+    (if a
+        (caddr a)
+        (error "unhandled primitive: " p))))
 
 (define (emit-prim-prelude-prelude)
   (for-each
@@ -136,7 +153,8 @@
 (define (self-evaluating-form? form)
   (or (null? form)
       (number? form)
-      (boolean? form)))
+      (boolean? form)
+      (string? form)))
 
 (define (emit-c term)
   (cond ((prim? term)

@@ -13,6 +13,14 @@ scm* scm_char(char *s) {
   return scmalloc((scm){ .t = scm_type_char, .v.s = s });
 }
 
+scm* scm_newchar(char *s) {
+  assert((unsigned)strlen(s) == 1);
+  char *t = malloc(2);
+  t[0]=s[0];
+  t[1]=0;
+  return scmalloc((scm){ .t = scm_type_char, .v.s = t });
+}
+
 scm* scm_string(char *s) {
   return scmalloc((scm){ .t = scm_type_string, .v.s = s });
 }
@@ -355,4 +363,19 @@ scm *scm_procedure_question(scm* env, scm* obj) {
      obj->v.cons.car->t == scm_type_fptr)
     return scmalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
   return scmalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
+}
+
+
+scm* scm_string_to_list(scm* env, scm* str) {
+  assert(str->t == scm_type_string);
+  
+  char *s = str->v.s;
+  scm *list = scmalloc((scm){ .t = scm_type_null });
+  int i;
+  
+  for(i = strlen(s)-1; i >= 0; i--) {
+    list = scm_make_pair(scm_newchar(s+i), list);
+  }
+  
+  return list;
 }

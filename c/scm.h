@@ -103,3 +103,6 @@ scm* scm_vector_question(scm* env, scm* obj);
 scm* scm_null_question(scm* env, scm* obj);
 scm* scm_pair_question(scm* env, scm* obj);
 scm* scm_procedure_question(scm* env, scm* obj);
+
+scm* scm_string_to_list(scm* env, scm* str);
+
