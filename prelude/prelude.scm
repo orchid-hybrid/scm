@@ -56,7 +56,7 @@
 
 
 (define (list->string lst)
-  (foldr (lambda (c m) (string-append (char->string c) m)) "") lst)
+  (foldr (lambda (c m) (string-append (char->string c) m)) "" lst))
 
 (define (length lst)
   (if (null? lst)

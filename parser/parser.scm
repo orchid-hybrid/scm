@@ -27,6 +27,7 @@
       (char-numeric? char)
       (equal? #\= char)
       (equal? #\* char)
+      (equal? #\/ char)
       (equal? #\- char)
       (equal? #\+ char)
       (equal? #\. char)
