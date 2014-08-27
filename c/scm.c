@@ -174,6 +174,27 @@ scm* scm_put_string(scm* env, scm *s) {
 }
 
 
+scm* scm_file_to_string(scm *env, scm *s) {
+  assert(s->t == scm_type_string);
+  File* f;
+  char* buffer = 0;
+  //int start = ftell(f);
+
+  if(s->v.s == "stdin") {
+    f = stdin;
+  } else {
+    f = fopen(s->v.s, "rb");
+  }
+
+  int length = lseek(f, 0, SEEK_END);
+  fseek(f, 0, SEEK_SET);
+  buffer = malloc (length);
+  if (buffer) { fread(buffer, 1, length, f); }
+  fclose(f);
+  return scm_string(buffer);
+}
+
+
 scm* scm_symbol_to_string(scm *env, scm *s) {
   assert(s->t == scm_type_symbol);
   return scm_string(s->v.s);
@@ -199,6 +220,7 @@ scm* scm_string_to_symbol(scm *env, scm *s) {
   return scm_make_symbol(s->v.s);
 }
 
+
 scm* scm_string_append(scm* env, scm *a, scm *b) {
   assert((a->t == scm_type_string && b->t == scm_type_string)
          || (a->t == scm_type_char && b->t == scm_type_char));
@@ -215,6 +237,11 @@ scm* scm_string_length(scm* env, scm* s) {
   return scmalloc((scm){ .t = scm_type_number, .v.n = strlen(s->v.s) });
 }
 
+scm* scm_string_ref(scm *env, scm *i, scm *s) {
+  assert(s->t == scm_type_string);
+  assert(i->t == scm_type_number);;
+  return scm_char(s->v.s[i->v.n]);
+}
 
 scm* scm_cons(scm* env, scm *car, scm *cdr) {
   return scm_make_pair(car,cdr);

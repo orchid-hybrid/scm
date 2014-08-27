@@ -64,7 +64,9 @@ scm* scm_print(scm* env, scm* s);
 scm* scm_error(scm* env, scm* s);
 scm* scm_newline(scm* env);
 scm* scm_put_string(scm* env, scm *s);
+scm* scm_file_to_string(scm *env, scm *s);
 scm* scm_string_append(scm* env, scm *a, scm *b);
+scm* scm_string_length(scm* env, scm* s);
 scm* scm_string_length(scm* env, scm* s);
 
 scm* scm_symbol_to_string(scm *env, scm *s);

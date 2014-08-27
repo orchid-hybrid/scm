@@ -76,6 +76,8 @@
     (put-string "__put_string" "scm_put_string")
     (string-append "__string_append" "scm_string_append")
 
+    (file->string "__file_to_string" "scm_tile_to_string")
+
     (number->string "__number_to_string" "scm_number_to_string")
     (char->string "__char_to_string" "scm_char_to_string")
     (symbol->string "__symbol_to_string" "scm_symbol_to_string")
