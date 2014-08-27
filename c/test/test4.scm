@@ -1,3 +1,3 @@
-(begin
-  (print "Hello!") (newline)
-  (print "World!") (newline))
+(define (moo) (begin
+                (print "Hello!") (newline)
+                (print "World!") (newline)))

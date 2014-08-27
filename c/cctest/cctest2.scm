@@ -67,6 +67,8 @@
       sets
       (set-union (car sets) (set-union* (cdr sets)))))
 
+
+
 (define (variable-form? t)
   (symbol? t))
 
@@ -88,7 +90,7 @@
 (define (application-form? t)
   (list? t))
 
-
+;; Traversal functions
 
 (define (traverse string-case char-case number-case boolean-case quote-case variable-case lambda-case application-case)
   ;; t ::= v
@@ -116,49 +118,46 @@
            (application-case t))
           (else (error "traverse")))))
 
-(define (tee)
-  (traverse display display display display (lambda (q) (display "quote") (display q)) (lambda (v) (display "variable") (display v)) (lambda (args body) (display "lambda") (display args) (display "&") (( tee) body) (newline)) (lambda (terms) (display "application") (map (tee) terms) (newline))))
+
+
+
+(define (annotate-free-variables)
+  ;; This traverses a lambda term changing lambda to
+  ;; lambda* by adding the list of free variables
+  (traverse (lambda (s)
+              (cons s '()))
+            (lambda (c)
+              (cons c '()))
+            (lambda (n)
+              (cons n '()))
+            (lambda (b)
+              (cons b '()))
+             (lambda (q)
+               (cons `(quote ,q) '()))
+            (lambda (v)
+              (cons v (list v)))
+            (lambda (args body)
+              (let ((body-result ((annotate-free-variables) body)))
+                (let ((annotated-body (car body-result))
+                      (free-variables (set-remove (cdr body-result) args)))
+                  (cons `(lambda* ,args ,free-variables ,annotated-body)
+                        free-variables))))
+            (lambda (terms)
+              (let ((terms-result (map (annotate-free-variables) terms)))
+                (cons (map car terms-result)
+                      (set-union* (map cdr terms-result)))))))
 
 (define (moo)
   (begin
-    (display (set-union '(a h u e d f v c)
-                        '(o k n u h b y g v)))
-    (newline)
-    
-    (display (set-intersect '(a h u e d f v c)
-                            '(o k n u h b y g v)))
-    (newline)
-    
-    (display (list-index 'h '(o k n u h b y g v)))
-    (newline)
-    
-    (display (variable-form? 'x)) (newline)
-    (display (variable-form? '(f x))) (newline)
-    (display (lambda-form? 'x)) (newline)
-    (display (lambda-form? '(x y))) (newline)
-    (display (lambda-form? '(lambda (x) y))) (newline)
-    (display (application-form? 'x)) (newline)
-    (display (application-form? '(f x))) (newline)
+    (let ((f (lambda (t)
+               (display t) (newline)
+               (let ((u ((annotate-free-variables) t)))
+                 (display (car u)) (newline)
+                 (display ((annotate-free-variables) (car u))) (newline)
+                 (newline)))))
+      (f '(lambda (x) x))
+      (f '(f (lambda (x) x) (lambda (y) y) (lambda (z) z)))
+      (f '(f (lambda (x u) (h i j (lambda (v w) (w u u u v)) l)) y z))
+      (f '(lambda (a) (lambda (b) (lambda (c) a))))
 
-    (display (set-union '(a h u e d f v c)
-                        '(o k n u h b y g v)))
-    (newline)
-    
-    (display (set-intersect '(a h u e d f v c)
-                            '(o k n u h b y g v)))
-    (newline)
-    
-    (display (list-index 'h '(o k n u h b y g v)))
-    (newline)
-    
-    (display (variable-form? 'x)) (newline)
-    (display (variable-form? '(f x))) (newline)
-    (display (lambda-form? 'x)) (newline)
-    (display (lambda-form? '(x y))) (newline)
-    (display (lambda-form? '(lambda (x) y))) (newline)
-    (display (application-form? 'x)) (newline)
-    (display (application-form? '(f x))) (newline)
-
-    (( tee) '(lambda (x) (f x y z)))
-    (( tee) '(lambda (x) (f x y z)))
-    ))
+      )))

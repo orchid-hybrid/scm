@@ -1,1 +1,1 @@
-(print "HELLO")
+(define (moo) (print "HELLO"))
