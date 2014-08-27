@@ -172,25 +172,58 @@ scm* scm_put_string(scm* env, scm *s) {
   return NULL;
 }
 
+scm* scm_newline_character(scm* env) {
+  char* s = "\n";
+  return scm_newchar(s);
+}
 
 scm* scm_file_to_string(scm *env, scm *s) {
   assert(s->t == scm_type_string);
-  FILE* f;
-  char* buffer = 0;
-  //int start = ftell(f);
 
   if(s->v.s == "stdin") {
-    f = stdin;
+    char buffer[1024];
+    size_t contentSize = 1; // includes NULL
+    /* Preallocate space.  We could just allocate one char here, 
+       but that wouldn't be efficient. */
+    char *content = malloc(sizeof(char) * 1024);
+    if(content == NULL)
+      {
+        perror("Failed to allocate content");
+        exit(1);
+      }
+    content[0] = '\0'; // make null-terminated
+    while(fgets(buffer, 1024, stdin))
+      {
+        char *old = content;
+        contentSize += strlen(buffer);
+        content = realloc(content, contentSize);
+        if(content == NULL)
+          {
+            perror("Failed to reallocate content");
+            free(old);
+            exit(2);
+          }
+        strcat(content, buffer);
+      }
+
+    if(ferror(stdin))
+      {
+        free(content);
+        perror("Error reading from stdin.");
+        exit(3);
+      }
+    return scm_string(content);
   } else {
-    f = fopen(s->v.s, "rb");
+    FILE* f = fopen(s->v.s, "rb");
+    char* buffer = 0;
+    int length = lseek(f, 0, SEEK_END);
+    fseek(f, 0, SEEK_SET);
+    buffer = malloc(length);
+    if (buffer) { fread(buffer, 1, length, f); }
+    fclose(f);
+    return scm_string(buffer);
   }
 
-  int length = lseek(f, 0, SEEK_END);
-  fseek(f, 0, SEEK_SET);
-  buffer = malloc (length);
-  if (buffer) { fread(buffer, 1, length, f); }
-  fclose(f);
-  return scm_string(buffer);
 }
 
 

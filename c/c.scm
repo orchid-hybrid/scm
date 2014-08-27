@@ -73,7 +73,10 @@
   '((print "__print" "scm_print")
     (error "__error" "scm_error")
     (newline "__newline" "scm_newline")
+    (newline-character "__newline" "scm_newline_character")
     (put-string "__put_string" "scm_put_string")
+    (string-ref "__string_ref" "scm_string_ref")
+    (string-length "__string_length" "scm_string_length")
     (string-append "__string_append" "scm_string_append")
 
     (file->string "__file_to_string" "scm_file_to_string")

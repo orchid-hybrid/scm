@@ -1,39 +1,45 @@
 ;; depends on utility/list.scm
 
-(define (collector) ;; TODO switch over to the collector in utility
-  ;; collect elements into a list and ask for its value
-  ;; 
-  ;; (let ((c (collector)))
-  ;;    (c 'a) (c 'b) (c))
-  (let ((list '())
-        (last-cell #f))
-    (lambda args
-      (if (null? args)
-          list
-          (if last-cell
-              (begin
-                (set-cdr! last-cell (cons (car args) '()))
-                (set! last-cell (cdr last-cell)))
-              (begin
-                (set! list (cons (car args) '()))
-                (set! last-cell list)))))))
+(define (all p l)
+  (if (null? l)
+      #t
+      (if (p (car l))
+          (all p (cdr l))
+          #f)))
 
-(define (whitespace? char)
-  (or (equal? char #\space)
-      (equal? char #\newline)))
+(define (string a b) (string-append (char->string a) (char->string b)))
 
-(define (symbolic? char)
-  (or (char-alphabetic? char)
-      (char-numeric? char)
-      (equal? #\= char)
-      (equal? #\* char)
-      (equal? #\- char)
-      (equal? #\+ char)
-      (equal? #\. char)
-      (equal? #\? char)
-      (equal? #\! char)
-      (equal? #\< char)
-      (equal? #\> char)))
+(define (collector)
+  (let ((list (make-cell '()))
+        (last (make-cell '())))
+    (cons (lambda ()
+            (cell-value list))
+          (lambda (value)
+            (if (null? (cell-value last))
+                (begin
+                  (set-cell! list (cons value '()))
+                  (set-cell! last (cell-value list)))
+                (begin
+                  (set-cdr! (cell-value last) (cons value '()))
+                  (set-cell! last (cdr (cell-value last)))))))))
+
+(define (whitespace? c)
+  (or (equal? c #\space)
+      (equal? c #\newline)))
+
+(define (symbolic? c)
+  (or (char-alphabetic? c)
+      (char-numeric? c)
+      (equal? #\= c)
+      (equal? #\* c)
+      (equal? #\- c)
+      (equal? #\/ c)
+      (equal? #\+ c)
+      (equal? #\. c)
+      (equal? #\? c)
+      (equal? #\! c)
+      (equal? #\< c)
+      (equal? #\> c)))
 
 (define (skip-whitespace stream)
   (if (whitespace? (peek-char stream))
@@ -41,18 +47,18 @@
              (skip-whitespace stream))
       #f))
 
-(define (classify char)
-  (cond ((eof-object? char) 'eof)
-        ((whitespace? char) 'whitespace)
-        ((equal? char #\.) 'dot)
-        ((symbolic? char) 'symbolic)
-        ((equal? char #\") 'string-quote)
-        ((equal? char #\') 'lisp-quote)
-        ((equal? char #\`) 'quasi-quote)
-        ((equal? char #\,) 'unquote)
-        ((equal? char #\() 'open)
-        ((equal? char #\;) 'comment)
-        ((equal? char #\#) 'hash)
+(define (classify c)
+  (cond ((eof-object? c) 'eof)
+        ((whitespace? c) 'whitespace)
+        ((equal? c #\.) 'dot)
+        ((symbolic? c) 'symbolic)
+        ((equal? c #\") 'string-quote)
+        ((equal? c #\') 'lisp-quote)
+        ((equal? c #\`) 'quasi-quote)
+        ((equal? c #\,) 'unquote)
+        ((equal? c #\() 'open)
+        ((equal? c #\;) 'comment)
+        ((equal? c #\#) 'hash)
         (else 'unknown)))
 
 (define (read-symbol-aux input-stream sym create-symbol)
@@ -63,24 +69,24 @@
       (create-symbol (sym))))
 
 (define (read-symbol input-stream)
-  (let ((create-symbol (lambda (chars)
-                         (if (all char-numeric? chars)
-                             (string->number (list->string chars))
-                             (string->symbol (list->string chars))))))
+  (let ((create-symbol (lambda (cs)
+                         (if (all char-numeric? cs)
+                             (string->number (list->string cs))
+                             (string->symbol (list->string cs))))))
     (read-symbol-aux input-stream (collector) create-symbol)))
 
 
 (define (read-string-aux input-stream str)
-    (let ((char (read-char input-stream)))
-      (cond ((eof-object? char)
+    (let ((c (read-char input-stream)))
+      (cond ((eof-object? c)
              (error "reading terminated before string ended"))
-            ((equal? #\\ char)
+            ((equal? #\\ c)
              (str (read-char input-stream))
              (read-string-aux input-stream str))
-            ((equal? #\" char)
+            ((equal? #\" c)
              (list->string (str)))
             (else
-             (str char)
+             (str c)
              (read-string-aux input-stream str)))))
 
 (define (read-string input-stream)
@@ -102,14 +108,13 @@
   (read-until-whitespace-aux '() input-stream))
 
 (define (finish-reading-char input-stream)
-  (let ((code (read-until-whitespace input-stream))
-        (string->char (lambda (s) (string-ref s 0))))
+  (let ((code (read-until-whitespace input-stream)))
      (if (= (length code) 1)
          (car code)
-         (let ((ctag (foldl string "" code)))
+         (let ((ctag (list->string code)))
            (cond
             ((equal? ctag "space")  #\space)
-            ((equal? ctag "newline")  #\newline))))))
+            ((equal? ctag "newline") #\newline))))))
 
 (define (scm-read get-line input-stream)
   (skip-whitespace input-stream)

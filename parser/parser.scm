@@ -97,20 +97,19 @@
   (let ((p (peek-char input-stream)))
     (if (whitespace? p)
         b
-        (cons (read-char input-stream) b))))
+        (read-until-whitespace-aux (cons (read-char input-stream) b) input-stream))))
 
 (define (read-until-whitespace input-stream)
   (read-until-whitespace-aux '() input-stream))
 
 (define (finish-reading-char input-stream)
-  (let ((code (read-until-whitespace input-stream))
-        (string->char (lambda (s) (string-ref s 0))))
+  (let ((code (read-until-whitespace input-stream)))
      (if (= (length code) 1)
          (car code)
-         (let ((ctag (foldl string "" code)))
+         (let ((ctag (list->string code)))
            (cond
             ((equal? ctag "space")  #\space)
-            ((equal? ctag "newline")  #\newline))))))
+            ((equal? ctag "newline") #\newline))))))
 
 ;; (define (finish-reading-char input-stream)
 ;;   (define (assert-code codes)

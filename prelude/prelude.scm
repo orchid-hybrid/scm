@@ -20,6 +20,13 @@
       (or (equal? s (car l))
           (member s (cdr l)))))
 
+(define alphabetic-chars (string->list "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"))
+(define numeric-chars (string->list "1234567890"))
+(define (char-alphabetic? c)
+  (member c alphabetic-chars))
+(define (char-numeric? c)
+  (member c numeric-chars))
+
 (define (tostring obj)
   (cond
    ((string? obj) obj)
