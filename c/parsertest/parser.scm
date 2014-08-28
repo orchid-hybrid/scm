@@ -224,10 +224,10 @@
             (begin (sexps (scm-read get-line input-stream))
                    (scm-read* sexps get-line input-stream))))))
 
-(define eof-object (generate-symbol "eof"))
+(define eof-object 1)
 
 (define (eof-object? o)
-  (eq? eof-object o))
+  (number? o))
 
 (define (peek-char port)
   (let ((c (peek-char0)))

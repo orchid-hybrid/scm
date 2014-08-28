@@ -350,7 +350,7 @@ scm *scm_boolean(scm* env, scm* b, scm* thn, scm* els) {
 scm* scm_eq_question(scm* env, scm* a, scm* b) {
   if(a->t != b->t) return scmalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
   
-  if((a->t == scm_type_symbol || a->t == scm_type_string) &&
+  if((a->t == scm_type_symbol || a->t == scm_type_string || a->t == scm_type_char) &&
      !strcmp(a->v.s,b->v.s))
     return scmalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
   

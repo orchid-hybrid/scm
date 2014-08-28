@@ -5,6 +5,7 @@
          (or (and p q)
              (and (not p) (not q))))
         ((or (and (symbol? p) (symbol? q))
+             (and (char? p) (char? q))
              (and (string? p) (string? q)))
          (eq? p q))
         ((and (null? p) (null? q))
