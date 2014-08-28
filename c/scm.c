@@ -177,7 +177,7 @@ scm* scm_newline_character(scm* env) {
   return scm_newchar(s);
 }
 
-scm* scm_read_char(scm *env) {
+scm* scm_read_char0(scm *env) {
   int c = getc(stdin);
   
   if(c == -1) {
@@ -190,7 +190,7 @@ scm* scm_read_char(scm *env) {
   }
 }
 
-scm* scm_peek_char(scm *env) {
+scm* scm_peek_char0(scm *env) {
   int c = getc(stdin);
   
   if(c == -1) {

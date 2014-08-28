@@ -69,8 +69,8 @@ scm* scm_string_append(scm* env, scm *a, scm *b);
 scm* scm_string_length(scm* env, scm* s);
 scm* scm_string_ref(scm *env, scm *i, scm *s);
 
-scm* scm_read_char(scm *env);
-scm* scm_peek_char(scm *env);
+scm* scm_read_char0(scm *env);
+scm* scm_peek_char0(scm *env);
 
 scm* scm_symbol_to_string(scm *env, scm *s);
 scm* scm_char_to_string(scm *env, scm *s);

@@ -189,13 +189,10 @@
       (close port))
     (define (peek-char*)
       (peek-char port))
-    (values (lambda () line)
-            (make-input-port read-char* char-ready?* close* peek-char*))))
+    (cons (lambda () line)
+          (make-input-port read-char* char-ready?* close* peek-char*))))
 
 (define (scm-parse-file filename)
-  (let ((sexps (collector)))
-    (call-with-values
-        (lambda ()
-          (wrap-port-with-line-tracking (open-input-file filename)))
-      (lambda (get-line port)
-        (scm-read* sexps get-line port)))))
+  (let ((sexps (collector))
+        (line-port (wrap-port-with-line-tracking (open-input-file filename))))
+    (scm-read* sexps (car line-port) (cdr line-port))))

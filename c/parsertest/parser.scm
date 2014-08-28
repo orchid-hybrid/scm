@@ -229,31 +229,35 @@
 (define (eof-object? o)
   (eq? eof-object o))
 
-(define (port-eof? port)
-  (= (- (string-length (caddr port)) (car port)) 0))
-
 (define (peek-char port)
-  (if (port-eof? port)
-      eof-object
-      (string-ref (caddr port) 0)))
-
-(define (read-char port)
-  (if (port-eof? port)
-      eof-object
-      (let ((c (string-ref (caddr port) (cell-value (car port)))))
-        (if (equal? #\newline c)
-            (set-cell! (cadr port) (+ (cell-value (cadr port)) 1))
-            #f)
-        (set-cell! (car port) (+ 1 (cell-value (car port))))
+  (let ((c (peek-char0)))
+    (if (number? c)
+        eof-object
         c)))
 
+(define (read-char port)
+  (let ((c (read-char0)))
+    (if (number? c)
+        eof-object
+        (begin 
+          (if (equal? #\newline c)
+              (set-cell! (cadr port) (+ (cell-value (cadr port)) 1))
+              #f)
+          (set-cell! (car port) (+ 1 (cell-value (car port))))
+          c))))
+
+(define (open-input-file x) x)
+
+(define (wrap-port-with-line-tracking p)
+  (let* ((line (make-cell 1))
+         (get-line (lambda () (cell-value line))))
+    (cons get-line
+          (list (make-cell 0) line))))
+
 (define (scm-parse-file filename)
-  (let* ((sexps (collector))
-         (filestr  (file->string filename))
-         (line (make-cell 1))
-         (get-line (lambda () (cell-value line)))
-         (port (list (make-cell 0) line filestr)))
-    (scm-read* sexps get-line port)))
+  (let ((sexps (collector))
+        (line-port (wrap-port-with-line-tracking (open-input-file filename))))
+    (scm-read* sexps (car line-port) (cdr line-port))))
 
 (define (moo)
-  (scm-parse-file "parser.scm"))
+  (scm-parse-file "asd"))
