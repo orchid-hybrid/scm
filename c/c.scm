@@ -37,7 +37,9 @@
                        (if (or (eq? c #\")
                                (eq? c #\\))
                            (list #\\ c)
-                           (list c)))))
+                           (if (eq? c #\newline)
+                               (list #\\ #\n)
+                               (list c))))))
     (list->string (concat-map escape-char (string->list s)))))
 
 (define (string-quote s)

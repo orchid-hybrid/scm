@@ -23,6 +23,49 @@
                   (set-cdr! (cell-value last) (cons value '()))
                   (set-cell! last (cdr (cell-value last)))))))))
 
+
+
+;; This implements gensym, a fresh name generator
+;; it stores all the symbols it's previously created
+;; and makes sure it only hands out something never
+;; seen before
+
+(define (member s l)
+  (if (null? l)
+      #f
+      (or (equal? s (car l))
+          (member s (cdr l)))))
+
+(define symbol-table (make-cell '()))
+
+(define (symbol-add s)
+  ;; Add the symbol s to the symbol-table
+  ;; unless it's already in there.
+  ;; Returns a #t if the symbol is fresh and
+  ;; had to be added, #f if it was already in
+  ;; there.
+  (if (member s (cell-value symbol-table))
+      #f
+      (begin
+        (set-cell! symbol-table (cons s (cell-value symbol-table)))
+        #t)))
+
+(define (add-all-symbols sexp)
+  ;; traverse an s-expression adding every symbol in the tree
+  (cond ((symbol? sexp) (symbol-add sexp))
+        ((pair? sexp)
+         (add-all-symbols (car sexp))
+         (add-all-symbols (cdr sexp)))
+        (else #f)))
+
+(define (generate-symbol prefix)
+  (let loop ((counter 0))
+    (let ((s (string->symbol (string-append prefix (number->string counter)))))
+      (if (symbol-add s)
+          s
+          (loop (+ counter 1))))))
+
+
 (define (whitespace? c)
   (or (equal? c #\space)
       (equal? c #\newline)))
@@ -81,12 +124,12 @@
       (cond ((eof-object? c)
              (error "reading terminated before string ended"))
             ((equal? #\\ c)
-             (str (read-char input-stream))
+             ((cdr str) (read-char input-stream))
              (read-string-aux input-stream str))
             ((equal? #\" c)
-             (list->string (str)))
+             (list->string ((car str))))
             (else
-             (str c)
+             ((cdr str) c)
              (read-string-aux input-stream str)))))
 
 (define (read-string input-stream)
@@ -98,23 +141,27 @@
       #f
       (read-until-end-of-line input-stream)))
 
-(define (read-until-whitespace-aux b input-stream)
-  (let ((p (peek-char input-stream)))
-    (if (whitespace? p)
-        b
-        (cons (read-char input-stream) b))))
-
-(define (read-until-whitespace input-stream)
-  (read-until-whitespace-aux '() input-stream))
+(define (assert-code codes input-stream)
+  (if (null? codes)
+      #f
+      (if (equal? (car codes)
+                  (read-char input-stream))
+          (assert-code (cdr codes) input-stream)
+          (error "unknown character code"))))
 
 (define (finish-reading-char input-stream)
-  (let ((code (read-until-whitespace input-stream)))
-     (if (= (length code) 1)
-         (car code)
-         (let ((ctag (list->string code)))
-           (cond
-            ((equal? ctag "space")  #\space)
-            ((equal? ctag "newline") #\newline))))))
+  (let ((first-char (read-char input-stream)))
+    (cond ((or (whitespace? (peek-char input-stream))
+               (equal? #\) (peek-char input-stream)))
+           first-char)
+          ((equal? #\s first-char)
+           (assert-code (list #\p #\a #\c #\e) input-stream)
+           #\space)
+          ((equal? #\n first-char)
+           (assert-code (list #\e #\w #\l #\i #\n #\e) input-stream)
+           #\newline)
+          (else (error "unknown character code")))))
+
 
 (define (scm-read get-line input-stream)
   (skip-whitespace input-stream)
@@ -177,7 +224,7 @@
             (begin (sexps (scm-read get-line input-stream))
                    (scm-read* sexps get-line input-stream))))))
 
-(define eof-object (gensym "eof"))
+(define eof-object (generate-symbol "eof"))
 
 (define (eof-object? o)
   (eq? eof-object o))
@@ -200,14 +247,13 @@
         (set-cell! (car port) (+ 1 (cell-value (car port))))
         c)))
 
-
 (define (scm-parse-file filename)
   (let* ((sexps (collector))
          (filestr  (file->string filename))
          (line (make-cell 1))
          (get-line (lambda () (cell-value line)))
-         (port (list (make-cell 0) line str)))
+         (port (list (make-cell 0) line filestr)))
     (scm-read* sexps get-line port)))
 
 (define (moo)
-  (scm-parse-file "stdin"))
+  (scm-parse-file "parser.scm"))
