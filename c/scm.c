@@ -215,12 +215,16 @@ scm* scm_file_to_string(scm *env, scm *s) {
     return scm_string(content);
   } else {
     FILE* f = fopen(s->v.s, "rb");
+    fseek(f, 0, SEEK_END);
     char* buffer = 0;
-    int length = lseek(f, 0, SEEK_END);
+    int length = ftell(f);
     fseek(f, 0, SEEK_SET);
     buffer = malloc(length);
     if (buffer) { fread(buffer, 1, length, f); }
     fclose(f);
+    
+    puts(buffer);
+    
     return scm_string(buffer);
   }
 
