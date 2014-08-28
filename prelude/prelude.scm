@@ -19,6 +19,24 @@
   (and (number? e)
        (= (- 0 1) e)))
 
+(define (peek-char port) (peek-char0))
+
+(define (read-char port)
+  (let ((c (read-char0)))
+    (if (equal? #\newline c)
+        (set-cell! (cadr port) (+ (cell-value (cadr port)) 1))
+        #f)
+    (set-cell! (car port) (+ 1 (cell-value (car port))))
+    c))
+(define (open-input-file x) x)
+
+(define (wrap-port-with-line-tracking p)
+  (let* ((line (make-cell 1))
+         (get-line (lambda () (cell-value line))))
+    (cons get-line
+          (list (make-cell 0) line))))
+
+
 (define (revappend l r)
   (if (null? l)
       r
@@ -49,7 +67,9 @@
    ((number? obj) (number->string obj))
    ((symbol? obj) (symbol->string obj))
    ((null? obj) "()")
-   ((list? obj) (foldl string-append "(" (append (map (lambda (s) (string-append (tostring s) " ")) obj) (cons ")" '()))))
+   ((list? obj) (foldl string-append "(" (append
+                                          (map (lambda (s) (string-append (tostring s) "")) obj)
+                                          (cons ")" '()))))
    ((pair? obj) (foldl string-append "(" (cons (tostring (car obj))
                                                (cons " . "
                                                      (cons (tostring (cdr obj))

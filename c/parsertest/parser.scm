@@ -22,48 +22,9 @@
                 (begin
                   (set-cdr! (cell-value last) (cons value '()))
                   (set-cell! last (cdr (cell-value last)))))))))
-
-
-
-;; This implements gensym, a fresh name generator
-;; it stores all the symbols it's previously created
-;; and makes sure it only hands out something never
-;; seen before
-
-(define (member s l)
-  (if (null? l)
-      #f
-      (or (equal? s (car l))
-          (member s (cdr l)))))
-
-(define symbol-table (make-cell '()))
-
-(define (symbol-add s)
-  ;; Add the symbol s to the symbol-table
-  ;; unless it's already in there.
-  ;; Returns a #t if the symbol is fresh and
-  ;; had to be added, #f if it was already in
-  ;; there.
-  (if (member s (cell-value symbol-table))
-      #f
-      (begin
-        (set-cell! symbol-table (cons s (cell-value symbol-table)))
-        #t)))
-
-(define (add-all-symbols sexp)
-  ;; traverse an s-expression adding every symbol in the tree
-  (cond ((symbol? sexp) (symbol-add sexp))
-        ((pair? sexp)
-         (add-all-symbols (car sexp))
-         (add-all-symbols (cdr sexp)))
-        (else #f)))
-
-(define (generate-symbol prefix)
-  (let loop ((counter 0))
-    (let ((s (string->symbol (string-append prefix (number->string counter)))))
-      (if (symbol-add s)
-          s
-          (loop (+ counter 1))))))
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;
 
 
 (define (whitespace? c)
@@ -107,9 +68,9 @@
 (define (read-symbol-aux input-stream sym create-symbol)
   (if (symbolic? (peek-char input-stream))
       (begin
-        (sym (read-char input-stream))
+        ((cdr sym) (read-char input-stream))
         (read-symbol-aux input-stream sym create-symbol))
-      (create-symbol (sym))))
+      (create-symbol ((car sym)))))
 
 (define (read-symbol input-stream)
   (let ((create-symbol (lambda (cs)
@@ -209,55 +170,26 @@
           (equal? #\) (peek-char input-stream)))
       (begin
         (read-char input-stream)
-        (sexps))
+        ((car sexps)))
       (begin
         (skip-whitespace input-stream)
         (if (equal? 'dot (classify (peek-char input-stream)))
             (begin (read-char input-stream)
-                   (let ((result (append (sexps) (scm-read get-line input-stream))))
+                   (let ((result (append ((car sexps)) (scm-read get-line input-stream))))
                      (skip-whitespace input-stream)
                      (if (or (eof-object? (peek-char input-stream))
                              (equal? #\) (peek-char input-stream)))
                          (read-char input-stream)
                          (error "stuff after dot"))
                      result))
-            (begin (sexps (scm-read get-line input-stream))
+            (begin ((cdr sexps) (scm-read get-line input-stream))
                    (scm-read* sexps get-line input-stream))))))
-
-(define eof-object 1)
-
-(define (eof-object? o)
-  (number? o))
-
-(define (peek-char port)
-  (let ((c (peek-char0)))
-    (if (number? c)
-        eof-object
-        c)))
-
-(define (read-char port)
-  (let ((c (read-char0)))
-    (if (number? c)
-        eof-object
-        (begin 
-          (if (equal? #\newline c)
-              (set-cell! (cadr port) (+ (cell-value (cadr port)) 1))
-              #f)
-          (set-cell! (car port) (+ 1 (cell-value (car port))))
-          c))))
-
-(define (open-input-file x) x)
-
-(define (wrap-port-with-line-tracking p)
-  (let* ((line (make-cell 1))
-         (get-line (lambda () (cell-value line))))
-    (cons get-line
-          (list (make-cell 0) line))))
 
 (define (scm-parse-file filename)
   (let ((sexps (collector))
         (line-port (wrap-port-with-line-tracking (open-input-file filename))))
     (scm-read* sexps (car line-port) (cdr line-port))))
 
+
 (define (moo)
-  (scm-parse-file "asd"))
+  (print (scm-parse-file "asd")))
