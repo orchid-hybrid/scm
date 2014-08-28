@@ -65,10 +65,12 @@ scm* scm_error(scm* env, scm* s);
 scm* scm_newline(scm* env);
 scm* scm_newline_character(scm* env);
 scm* scm_put_string(scm* env, scm *s);
-scm* scm_file_to_string(scm *env, scm *s);
 scm* scm_string_append(scm* env, scm *a, scm *b);
 scm* scm_string_length(scm* env, scm* s);
 scm* scm_string_ref(scm *env, scm *i, scm *s);
+
+scm* scm_read_char(scm *env);
+scm* scm_peek_char(scm *env);
 
 scm* scm_symbol_to_string(scm *env, scm *s);
 scm* scm_char_to_string(scm *env, scm *s);

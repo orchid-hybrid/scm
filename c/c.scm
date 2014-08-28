@@ -81,7 +81,8 @@
     (string-length "__string_length" "scm_string_length")
     (string-append "__string_append" "scm_string_append")
 
-    (file->string "__file_to_string" "scm_file_to_string")
+    (read-char "__read_char" "scm_read_char")
+    (peek-char "__peek_char" "scm_peek_char")
 
     (number->string "__number_to_string" "scm_number_to_string")
     (char->string "__char_to_string" "scm_char_to_string")

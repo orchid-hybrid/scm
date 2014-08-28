@@ -14,6 +14,18 @@
               (equal? (cdr p) (cdr q))))
         (#t #f)))
 
+(define (eof-object? e)
+  (and (number? e)
+       (= (- 0 1) e)))
+
+(define (revappend l r)
+  (if (null? l)
+      r
+      (revappend (cdr l) (cons (car l) r))))
+
+(define (reverse l)
+  (revappend l '()))
+
 (define (member s l)
   (if (null? l)
       #f

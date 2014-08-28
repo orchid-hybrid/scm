@@ -1,3 +1,3 @@
 (define (moo)
-  (let* ((filestr (file->string "parsertest/test1.scm")))
+  (let* ((filestr (file->string "parsertest/parser.scm")))
     (display filestr)))

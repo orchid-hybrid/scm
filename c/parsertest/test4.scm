@@ -1,0 +1,6 @@
+(define (moo)
+  (display (list->string (let loop ((str '()))
+                           (let ((ch (read-char)))
+                             (if (eof-object? ch)
+                                 (reverse str)
+                                 (loop (cons ch str))))))))
