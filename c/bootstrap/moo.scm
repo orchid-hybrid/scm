@@ -1,2 +1,2 @@
 (define (moo)
-  (map display (map desugar (scm-parse-file "stdin"))))
+  (compile-c-definitions (map desugar (scm-parse-file "stdin"))))
