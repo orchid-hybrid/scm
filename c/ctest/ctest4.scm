@@ -42,5 +42,5 @@
 
 (define (moo)
   (begin
-    (display (emit-c 'foo)) (newline)
+    (emit-c 'foo) (newline)
     ))

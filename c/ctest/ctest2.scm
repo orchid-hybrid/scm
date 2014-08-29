@@ -87,7 +87,7 @@
          (display (mangle* f (length args)))
          (display "(")
          (let ((n (length args)))
-           (cond ((= n 0))
+           (cond ((= n 0) #f)
                  ((> n 0)
                   (if (equal? f 'vector)
                       (display "")
@@ -190,7 +190,6 @@
       (string? form)))
 
 (define (emit-c term)
-  (display 'emitting-c)
   (cond ((prim? term)
          (display (rename-prim term)))
         ((null? term)
@@ -237,22 +236,29 @@
   
 
 (define (moo)
-  (display (mangle 'foobar)) (newline)
-  (display (mangle 'foobar->baz)) (newline)
-  (display (mangle '=)) (newline)
-  (display (mangle 'null?)) (newline)
-  
-  (display (mangle* 'foobar)) (newline)
-  (display (mangle* 'foobar->baz)) (newline)
-  (display (mangle* '=)) (newline)
-  (display (mangle* 'null?)) (newline)
-  
-  (display (prim? 'foo)) (newline)
-  (display (prim? '=)) (newline)
-  (display (prim? 'null?)) (newline)
-  
-  (display (rename-prim 'null?)) (newline)
-  
-  (display (emit-c 'null?)) (newline)
-  )
+  (begin
+    (display (mangle 'foobar)) (newline)
+    (display (mangle 'foobar->baz)) (newline)
+    (display (mangle '=)) (newline)
+    (display (mangle 'null?)) (newline)
+    
+    (display (mangle* 'foobar)) (newline)
+    (display (mangle* 'foobar->baz)) (newline)
+    (display (mangle* '=)) (newline)
+    (display (mangle* 'null?)) (newline)
+    
+    (display (prim? 'foo)) (newline)
+    (display (prim? '=)) (newline)
+    (display (prim? 'null?)) (newline)
+    
+    (display (rename-prim 'null?)) (newline)
+    
+    (map (lambda (t) (emit-c t) (newline))
+         '(
+           (make-closure (lambda (env x) x) (vector))
+           (invoke-closure f (make-closure (lambda (env x) x) (vector)) (make-closure (lambda (env y) y) (vector)) (make-closure (lambda (env z) z) (vector)))
+           (invoke-closure f (make-closure (lambda (env x u) (invoke-closure (vector-ref env 0) (vector-ref env 1) (vector-ref env 2) (make-closure (lambda (env v w) (invoke-closure w (vector-ref env 0) (vector-ref env 0) (vector-ref env 0) v)) (vector u)) (vector-ref env 3))) (vector h i j l)) y z)
+           (make-closure (lambda (env a) (make-closure (lambda (env b) (make-closure (lambda (env c) (vector-ref env 0)) (vector (vector-ref env 0)))) (vector a))) (vector))))
 
+
+    ))

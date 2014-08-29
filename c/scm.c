@@ -157,7 +157,9 @@ scm* scm_print(scm* env, scm *s) {
 }
 
 scm* scm_error(scm* env, scm *s) {
+  puts("EXITING WITH ERROR");
   puts(s->v.s);
+  puts("EXITING WITH ERROR");
   exit(-1);
   return NULL;
 }
