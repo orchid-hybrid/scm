@@ -55,5 +55,4 @@
 
 (define (perform-closure-conversion term)
   (let ((a ((annotate-free-variables) term)))
-    (display ((closure-convert '()) (car a)))
-    (newline)))
+    ((closure-convert '()) (car a))))
