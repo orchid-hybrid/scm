@@ -114,6 +114,11 @@
       m
       (cons (car l) (append (cdr l) m))))
 
+(define (fold fn init lst)
+  (if (null? lst)
+      init
+      (fn (car lst) (foldr fn init (cdr lst)))))
+
 (define (foldl fn init lst)
   (if (null? lst)
       init
