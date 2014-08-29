@@ -76,6 +76,15 @@
                                                      (cons (tostring (cdr obj))
                                                            (cons ")" '()))))))))
 
+(define (assoc k l)
+  (if (null? l)
+      #f
+      (if (equal? k (caar l))
+          (car l)
+          (assoc k (cdr l)))))
+
+
+
 (define (display obj)
   (put-string (tostring obj)))
 
