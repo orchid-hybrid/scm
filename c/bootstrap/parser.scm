@@ -51,7 +51,7 @@
                          (if (all char-numeric? cs)
                              (string->number (list->string cs))
                              (string->symbol (list->string cs))))))
-    (read-symbol-aux input-stream (collector) create-symbol)))
+    (read-symbol-aux input-stream (make-collector) create-symbol)))
 
 
 (define (read-string-aux input-stream str)
@@ -69,7 +69,7 @@
 
 (define (read-string input-stream)
   (read-char input-stream) ;; we assume this is #\"
-  (read-string-aux input-stream (collector)))
+  (read-string-aux input-stream (make-collector)))
 
 (define (read-until-end-of-line input-stream)
   (if (equal? #\newline (read-char input-stream))
@@ -122,7 +122,7 @@
 
     ((equal? 'open class)
      (read-char input-stream)
-     (scm-read* (collector) get-line input-stream))
+     (scm-read* (make-collector) get-line input-stream))
 
     ((equal? 'comment class)
      (read-until-end-of-line input-stream)
@@ -162,6 +162,6 @@
                    (scm-read* sexps get-line input-stream))))))
 
 (define (scm-parse-file filename)
-  (let ((sexps (collector))
+  (let ((sexps (make-collector))
         (line-port (wrap-port-with-line-tracking (open-input-file filename))))
     (scm-read* sexps (car line-port) (cdr line-port))))
