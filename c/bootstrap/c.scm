@@ -198,10 +198,10 @@
 
 
 (define (compile-c-definitions program)
-  (let ((declarations (collector))
+  (let ((declarations (make-collector))
         (definitions (make-cell '()))
-        (defined-values (collector))
-        (sets (collector)))
+        (defined-values (make-collector))
+        (sets (make-collector)))
     (for-each (lambda (definition)
                 ;;(newline)
                 ;;(pretty-print definition)
@@ -213,7 +213,7 @@
                              (equal? 'lambda (car (caddr definition))))
                        (let ((name (cadr definition))
                              (body (caddr definition)))
-                         (let ((collector (collector)))
+                         (let ((collector (make-collector)))
                            (let* ((cc (perform-closure-conversion body))
                                   (main ((hoist (cdr collector)) cc))
                                   (new-definitions ((car collector))))
@@ -226,7 +226,7 @@
                        
                        (let ((name (cadr definition))
                              (body (caddr definition)))
-                         (let ((collector (collector)))
+                         (let ((collector (make-collector)))
                            (let* ((cc (perform-closure-conversion body))
                                   (main ((hoist (cdr collector)) cc))
                                   (new-definitions ((car collector))))
