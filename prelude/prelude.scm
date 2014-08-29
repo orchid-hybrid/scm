@@ -28,6 +28,7 @@
         #f)
     (set-cell! (car port) (+ 1 (cell-value (car port))))
     c))
+
 (define (open-input-file x) x)
 
 (define (wrap-port-with-line-tracking p)
@@ -68,7 +69,7 @@
    ((symbol? obj) (symbol->string obj))
    ((null? obj) "()")
    ((list? obj) (foldl string-append "(" (append
-                                          (map (lambda (s) (string-append (tostring s) "")) obj)
+                                          (map (lambda (s) (string-append (tostring s) " ")) obj)
                                           (cons ")" '()))))
    ((pair? obj) (foldl string-append "(" (cons (tostring (car obj))
                                                (cons " . "

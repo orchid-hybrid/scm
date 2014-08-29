@@ -10,6 +10,7 @@
 (define (string a b) (string-append (char->string a) (char->string b)))
 
 (define (collector)
+  (lambda ()
   (let ((list (make-cell '()))
         (last (make-cell '())))
     (cons (lambda ()
@@ -21,7 +22,7 @@
                   (set-cell! last (cell-value list)))
                 (begin
                   (set-cdr! (cell-value last) (cons value '()))
-                  (set-cell! last (cdr (cell-value last)))))))))
+                  (set-cell! last (cdr (cell-value last))))))))))
 ;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;
@@ -77,7 +78,7 @@
                          (if (all char-numeric? cs)
                              (string->number (list->string cs))
                              (string->symbol (list->string cs))))))
-    (read-symbol-aux input-stream (collector) create-symbol)))
+    (read-symbol-aux input-stream ((collector)) create-symbol)))
 
 
 (define (read-string-aux input-stream str)
@@ -95,7 +96,7 @@
 
 (define (read-string input-stream)
   (read-char input-stream) ;; we assume this is #\"
-  (read-string-aux input-stream (collector)))
+  (read-string-aux input-stream ((collector))))
 
 (define (read-until-end-of-line input-stream)
   (if (equal? #\newline (read-char input-stream))
@@ -148,7 +149,7 @@
 
     ((equal? 'open class)
      (read-char input-stream)
-     (scm-read* (collector) get-line input-stream))
+     (scm-read* ((collector)) get-line input-stream))
 
     ((equal? 'comment class)
      (read-until-end-of-line input-stream)
@@ -162,7 +163,9 @@
        ((equal? c #\t) #t)
        ((equal? c #\\) (finish-reading-char input-stream))
        (else (error "unknown hash code")))))
-    (else (error (string-append "unknown symbol at line " (number->string (get-line))))))))
+    (else (error (string-append (string-append
+                                 "unknown symbol at line "
+                                 (tostring (number->string (get-line))))))))))
 
 (define (scm-read* sexps get-line input-stream)
   (skip-whitespace input-stream)
@@ -186,10 +189,12 @@
                    (scm-read* sexps get-line input-stream))))))
 
 (define (scm-parse-file filename)
-  (let ((sexps (collector))
+  (let ((sexps ((collector)))
         (line-port (wrap-port-with-line-tracking (open-input-file filename))))
     (scm-read* sexps (car line-port) (cdr line-port))))
 
 
 (define (moo)
-  (print (scm-parse-file "asd")))
+  (let ((p (scm-parse-file "asd")))
+    (display p)))
+
