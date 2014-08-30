@@ -1,31 +1,33 @@
 #include "scm.h"
+#include "gc.h"
 
 #include <assert.h>
 
-scm *scmalloc(scm s) {
-  scm *sp = malloc(sizeof(scm));
+scm *scalloc(scm s) {
+  //scm *sp = malloc(sizeof(scm));
+  scm *sp = (scm*)gc_alloc(sizeof(scm));
   *sp = s;
   return sp;
 }
 
 scm* scm_char(char *s) {
   assert((unsigned)strlen(s) == 1);
-  return scmalloc((scm){ .t = scm_type_char, .v.s = s });
+  return scalloc((scm){ .t = scm_type_char, .v.s = s });
 }
 
 scm* scm_newchar(char *s) {
   char *t = malloc(2);
   t[0]=s[0];
   t[1]=0;
-  return scmalloc((scm){ .t = scm_type_char, .v.s = t });
+  return scalloc((scm){ .t = scm_type_char, .v.s = t });
 }
 
 scm* scm_string(char *s) {
-  return scmalloc((scm){ .t = scm_type_string, .v.s = s });
+  return scalloc((scm){ .t = scm_type_string, .v.s = s });
 }
 
 scm* scm_vector_ref(scm *vec, int i) {
-  return vec->v.v[i];
+  return vec->v.vektor.v[i];
 }
 
 scm* scm_make_pair(scm* car, scm* cdr) {
@@ -35,15 +37,15 @@ scm* scm_make_pair(scm* car, scm* cdr) {
   p.v.cons.car = car;
   p.v.cons.cdr = cdr;
   
-  return scmalloc(p);
+  return scalloc(p);
 }
 
 scm* scm_make_symbol(char *s) {
-  return scmalloc((scm){ .t = scm_type_symbol, .v.s = s });
+  return scalloc((scm){ .t = scm_type_symbol, .v.s = s });
 }
 
 scm* scm_make_closure(scm_fptr code, scm* env) {
-  return scm_make_pair(scmalloc((scm){ .t = scm_type_fptr, .v.f = code}), env);
+  return scm_make_pair(scalloc((scm){ .t = scm_type_fptr, .v.f = code}), env);
 }
 
 scm* scm_invoke_closure1(scm *clos) {
@@ -52,7 +54,7 @@ scm* scm_invoke_closure1(scm *clos) {
   if(clos->v.cons.cdr->t != scm_type_vector) { puts("!VECTOR"); exit(0); }
   
   scm_fptr code = clos->v.cons.car->v.f;
-  scm** env = clos->v.cons.cdr->v.v;
+  scm** env = clos->v.cons.cdr->v.vektor.v;
   return code(env);
 }
 
@@ -62,7 +64,7 @@ scm* scm_invoke_closure2(scm *clos, scm *p1) {
   if(clos->v.cons.cdr->t != scm_type_vector) { puts("!VECTOR"); exit(0); }
   
   scm_fptr code = clos->v.cons.car->v.f;
-  scm** env = clos->v.cons.cdr->v.v;
+  scm** env = clos->v.cons.cdr->v.vektor.v;
   return code(env,p1);
 }
 
@@ -72,7 +74,7 @@ scm* scm_invoke_closure3(scm *clos, scm *p1, scm *p2) {
   if(clos->v.cons.cdr->t != scm_type_vector) { puts("!VECTOR"); exit(0); }
   
   scm_fptr code = clos->v.cons.car->v.f;
-  scm** env = clos->v.cons.cdr->v.v;
+  scm** env = clos->v.cons.cdr->v.vektor.v;
   return code(env,p1,p2);
 }
 
@@ -82,7 +84,7 @@ scm* scm_invoke_closure4(scm *clos, scm *p1, scm *p2, scm *p3) {
   if(clos->v.cons.cdr->t != scm_type_vector) { puts("!VECTOR"); exit(0); }
   
   scm_fptr code = clos->v.cons.car->v.f;
-  scm** env = clos->v.cons.cdr->v.v;
+  scm** env = clos->v.cons.cdr->v.vektor.v;
   return code(env,p1,p2,p3);
 }
 
@@ -92,7 +94,7 @@ scm* scm_invoke_closure5(scm *clos, scm *p1, scm *p2, scm *p3, scm *p4) {
   if(clos->v.cons.cdr->t != scm_type_vector) { puts("!VECTOR"); exit(0); }
   
   scm_fptr code = clos->v.cons.car->v.f;
-  scm** env = clos->v.cons.cdr->v.v;
+  scm** env = clos->v.cons.cdr->v.vektor.v;
   return code(env,p1,p2,p3,p4);
 }
 
@@ -102,7 +104,7 @@ scm* scm_invoke_closure6(scm *clos, scm *p1, scm *p2, scm *p3, scm *p4, scm *p5)
   if(clos->v.cons.cdr->t != scm_type_vector) { puts("!VECTOR"); exit(0); }
   
   scm_fptr code = clos->v.cons.car->v.f;
-  scm** env = clos->v.cons.cdr->v.v;
+  scm** env = clos->v.cons.cdr->v.vektor.v;
   return code(env,p1,p2,p3,p4,p5);
 }
 
@@ -112,7 +114,7 @@ scm* scm_invoke_closure7(scm *clos, scm *p1, scm *p2, scm *p3, scm *p4, scm *p5,
   if(clos->v.cons.cdr->t != scm_type_vector) { puts("!VECTOR"); exit(0); }
   
   scm_fptr code = clos->v.cons.car->v.f;
-  scm** env = clos->v.cons.cdr->v.v;
+  scm** env = clos->v.cons.cdr->v.vektor.v;
   return code(env,p1,p2,p3,p4,p5,p6);
 }
 
@@ -123,7 +125,7 @@ scm* scm_invoke_closure8(scm *clos, scm *p1, scm *p2, scm *p3, scm *p4, scm *p5,
   if(clos->v.cons.cdr->t != scm_type_vector) { puts("!VECTOR"); exit(0); }
   
   scm_fptr code = clos->v.cons.car->v.f;
-  scm** env = clos->v.cons.cdr->v.v;
+  scm** env = clos->v.cons.cdr->v.vektor.v;
   return code(env,p1,p2,p3,p4,p5,p6,p7);
 }
 
@@ -133,7 +135,7 @@ scm* scm_invoke_closure9(scm *clos, scm *p1, scm *p2, scm *p3, scm *p4, scm *p5,
   if(clos->v.cons.cdr->t != scm_type_vector) { puts("!VECTOR"); exit(0); }
   
   scm_fptr code = clos->v.cons.car->v.f;
-  scm** env = clos->v.cons.cdr->v.v;
+  scm** env = clos->v.cons.cdr->v.vektor.v;
   return code(env,p1,p2,p3,p4,p5,p6,p7,p8);
 }
 
@@ -184,7 +186,7 @@ scm* scm_read_char0(scm *env) {
   
   if(c == -1) {
     // eof object
-    return scmalloc((scm){ .t = scm_type_number, .v.n = -1 });
+    return scalloc((scm){ .t = scm_type_number, .v.n = -1 });
   }
   else {
     char x = c;
@@ -197,7 +199,7 @@ scm* scm_peek_char0(scm *env) {
   
   if(c == -1) {
     // eof object
-    return scmalloc((scm){ .t = scm_type_number, .v.n = -1 });
+    return scalloc((scm){ .t = scm_type_number, .v.n = -1 });
   }
   else {
     char x = c;
@@ -226,7 +228,7 @@ scm* scm_string_to_char(scm *env, scm *s) {
 
 scm* scm_string_to_number(scm *env, scm *s) {
   assert(s->t == scm_type_string);
-  return scmalloc((scm){ .t = scm_type_number, .v.n = atoi(s->v.s) });
+  return scalloc((scm){ .t = scm_type_number, .v.n = atoi(s->v.s) });
 }
 
 scm* scm_string_to_symbol(scm *env, scm *s) {
@@ -248,7 +250,7 @@ scm* scm_string_append(scm* env, scm *a, scm *b) {
 }
 
 scm* scm_string_length(scm* env, scm* s) {
-  return scmalloc((scm){ .t = scm_type_number, .v.n = strlen(s->v.s) });
+  return scalloc((scm){ .t = scm_type_number, .v.n = strlen(s->v.s) });
 }
 
 scm* scm_string_ref(scm *env, scm *i, scm *s) {
@@ -282,54 +284,54 @@ scm* scm_set_cdr(scm* env, scm* pair, scm *newcdr) {
 scm* scm_add(scm* env, scm* a, scm* b) {
   assert(a->t == scm_type_number && b->t == scm_type_number);
   int sum = a->v.n + b->v.n;
-  return scmalloc((scm){ .t = scm_type_number, .v.n = sum });
+  return scalloc((scm){ .t = scm_type_number, .v.n = sum });
 }
 scm* scm_mul(scm* env, scm* a, scm* b) {
   assert(a->t == scm_type_number && b->t == scm_type_number);
   int prod = a->v.n * b->v.n;
-  return scmalloc((scm){ .t = scm_type_number, .v.n = prod });
+  return scalloc((scm){ .t = scm_type_number, .v.n = prod });
 }
 
 scm* scm_div(scm* env, scm* a, scm* b) {
   assert(a->t == scm_type_number && b->t == scm_type_number);
   int quot = a->v.n / b->v.n;
-  return scmalloc((scm){ .t = scm_type_number, .v.n = quot });
+  return scalloc((scm){ .t = scm_type_number, .v.n = quot });
 }
 
 scm *scm_sub(scm* env, scm* a, scm* b) {
   assert(a->t == scm_type_number && b->t == scm_type_number);
   int diff = a->v.n - b->v.n;
-  return scmalloc((scm){ .t = scm_type_number, .v.n = diff });  
+  return scalloc((scm){ .t = scm_type_number, .v.n = diff });  
 }
 
 scm *scm_num_eq(scm* env, scm* a, scm* b) {
   assert(a->t == scm_type_number && b->t == scm_type_number);
   int eqp = a->v.n == b->v.n;
-  return scmalloc((scm){ .t = scm_type_boolean, .v.n = eqp });  
+  return scalloc((scm){ .t = scm_type_boolean, .v.n = eqp });  
 }
 
 scm *scm_num_lt(scm* env, scm* a, scm* b) {
   assert(a->t == scm_type_number && b->t == scm_type_number);
   int eqp = a->v.n < b->v.n;
-  return scmalloc((scm){ .t = scm_type_boolean, .v.n = eqp });  
+  return scalloc((scm){ .t = scm_type_boolean, .v.n = eqp });  
 }
 
 scm *scm_num_lte(scm* env, scm* a, scm* b) {
   assert(a->t == scm_type_number && b->t == scm_type_number);
   int eqp = a->v.n <= b->v.n;
-  return scmalloc((scm){ .t = scm_type_boolean, .v.n = eqp });  
+  return scalloc((scm){ .t = scm_type_boolean, .v.n = eqp });  
 }
 
 scm *scm_num_gt(scm* env, scm* a, scm* b) {
   assert(a->t == scm_type_number && b->t == scm_type_number);
   int eqp = a->v.n > b->v.n;
-  return scmalloc((scm){ .t = scm_type_boolean, .v.n = eqp });  
+  return scalloc((scm){ .t = scm_type_boolean, .v.n = eqp });  
 }
 
 scm *scm_num_gte(scm* env, scm* a, scm* b) {
   assert(a->t == scm_type_number && b->t == scm_type_number);
   int eqp = a->v.n >= b->v.n;
-  return scmalloc((scm){ .t = scm_type_boolean, .v.n = eqp });  
+  return scalloc((scm){ .t = scm_type_boolean, .v.n = eqp });  
 }
 
 scm *scm_number_to_string(scm* env, scm* n) {
@@ -350,65 +352,65 @@ scm *scm_boolean(scm* env, scm* b, scm* thn, scm* els) {
 }
 
 scm* scm_eq_question(scm* env, scm* a, scm* b) {
-  if(a->t != b->t) return scmalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
+  if(a->t != b->t) return scalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
   
   if((a->t == scm_type_symbol || a->t == scm_type_string || a->t == scm_type_char) &&
      !strcmp(a->v.s,b->v.s))
-    return scmalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
+    return scalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
   
-  return scmalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
+  return scalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
 }
 
 scm *scm_number_question(scm* env, scm* obj) {
   if(obj->t == scm_type_number)
-    return scmalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
-  return scmalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
+    return scalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
+  return scalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
 }
 scm *scm_boolean_question(scm* env, scm* obj) {
   if(obj->t == scm_type_boolean)
-    return scmalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
-  return scmalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
+    return scalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
+  return scalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
 }
 scm *scm_char_question(scm* env, scm* obj) {
   if(obj->t == scm_type_char)
-    return scmalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
-  return scmalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
+    return scalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
+  return scalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
 }
 scm *scm_string_question(scm* env, scm* obj) {
   //printf("oee\n");
   //printf("%p\n", obj);
   if(obj->t == scm_type_string) {
     //printf("ok1\n");
-    return scmalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
+    return scalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
   }
   //printf("ok2\n");
-  return scmalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
+  return scalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
 }
 scm *scm_symbol_question(scm* env, scm* obj) {
   if(obj->t == scm_type_symbol)
-    return scmalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
-  return scmalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
+    return scalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
+  return scalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
 }
 scm *scm_vector_question(scm* env, scm* obj) {
   if(obj->t == scm_type_vector)
-    return scmalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
-  return scmalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
+    return scalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
+  return scalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
 }
 scm *scm_null_question(scm* env, scm* obj) {
   if(obj->t == scm_type_null)
-    return scmalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
-  return scmalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
+    return scalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
+  return scalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
 }
 scm *scm_pair_question(scm* env, scm* obj) {
   if(obj->t == scm_type_pair)
-    return scmalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
-  return scmalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
+    return scalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
+  return scalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
 }
 scm *scm_procedure_question(scm* env, scm* obj) {
   if(obj->t == scm_type_pair &&
      obj->v.cons.car->t == scm_type_fptr)
-    return scmalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
-  return scmalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
+    return scalloc((scm){ .t = scm_type_boolean, .v.n = 1 });
+  return scalloc((scm){ .t = scm_type_boolean, .v.n = 0 });
 }
 
 
@@ -416,7 +418,7 @@ scm* scm_string_to_list(scm* env, scm* str) {
   assert(str->t == scm_type_string);
   
   char *s = str->v.s;
-  scm *list = scmalloc((scm){ .t = scm_type_null });
+  scm *list = scalloc((scm){ .t = scm_type_null });
   int i;
   
   for(i = strlen(s)-1; i >= 0; i--) {

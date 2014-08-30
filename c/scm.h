@@ -11,7 +11,9 @@ enum scm_type {
   scm_type_vector,
   scm_type_null,
   scm_type_pair,
-  scm_type_fptr
+  scm_type_fptr,
+  
+  scm_gc_marked
 };
 
 typedef struct scm scm;
@@ -23,16 +25,20 @@ struct scm {
   union {
     int n;
     char *s;
-    struct scm** v;
+    struct {
+      struct scm** v;
+      int len;
+    } vektor;
     struct {
       struct scm *car;
       struct scm *cdr;
     } cons;
     scm_fptr f;
+    scm *gc_ptr;
   } v;
 };
 
-scm *scmalloc(scm s);
+scm *scalloc(scm s);
 
 scm* scm_char(char *s);
 scm* scm_string(char *s);

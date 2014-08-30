@@ -26,13 +26,13 @@
         (begin (display ");") (newline))
         (begin
           (display ") {") (newline)
-          (display "  scm **v = malloc(") (display (number->string i)) (display "*sizeof(scm*));") (newline)
+          (display "  scm **v = gc_alloc(") (display (number->string i)) (display "*sizeof(scm*));") (newline)
           (display "  ")
           (for-each (lambda (i)
                       (display "v[") (display (number->string i)) (display "] = v") (display (number->string i)) (display "; "))
                     (almost-to 0 i))
           (newline)
-          (display "  return scmalloc((scm){ .t = scm_type_vector, .v.v = v });") (newline)
+          (display "  return scalloc((scm){ .t = scm_type_vector, .v.vektor.v = v, .v.vektor.len = ") (display (number->string i)) (display " });") (newline)
           (display "}") (newline)
           (newline)))))
 
