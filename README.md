@@ -1,17 +1,3 @@
-scm
-===
-
-The SCM compiler asked us to sacrife a child when we attempted to bootstrap it.
-
-![](https://i.imgur.com/6tQKqCJ.jpg)
-
-We pressed on but it said "STOP" "STOP".
-
-![](https://i.imgur.com/i1vvgPV.jpg)
-
-R.I.P. SCM
-
-
 lessons learned
 ===============
 
